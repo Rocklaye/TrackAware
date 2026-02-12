@@ -1,0 +1,29 @@
+{
+    "manifest_version": 3,
+    "name": "TrackAware",
+    "version": "1.0",
+    "description": "Extension de prise de notes simple et rapide.",
+    "icons": {
+        "16": "icons/icon16.jpeg",
+        "32": "icons/icon32.jpeg",
+        "48": "icons/icon48.jpeg",
+        "128": "icons/icon128.jpeg"
+    },
+    "action": {
+        "default_icon": {
+            "16": "icons/icon16.jpeg",
+            "32": "icons/icon32.jpeg"
+        },
+        "default_popup": "popup.html",
+        "default_title": "TrackAware"
+    },
+    "permissions": [
+        "storage",
+        "tabs",
+        "history",
+        "idle"
+    ],
+    "background": {
+        "service_worker": "background.js"
+    }
+}

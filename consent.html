@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Conditions d'Utilisation - TrackAware</title>
+    <script src="consent.js" defer></script>
+</head>
+<body>
+    <h1>CONDITIONS D'UTILISATION</h1>
+    <section>
+        <h3>Introduction & Transparence</h3>
+        <p>
+            Pour fonctionner de manière optimale, cette extension génère et stocke 
+            <strong>systématiquement et localement</strong> les données techniques suivantes:
+        </p>
+        <ul>
+            <li><strong>Horodatage (timestamp) :</strong> Date et heure précise de chaque interaction[.</li>
+            <li><strong>Identifiants locaux :</strong> Un session_id et un visitor_id (UUID) pour organiser vos données sans jamais vous identifier personnellement.</li>
+        </ul>
+        <p>Aucune donnée n'est envoyée à l'extérieur de votre navigateur.</p>
+    </section>
+    <h3>Choix des données de suivi</h3>
+    <p>Choisissez quelles données supplémentaires vous acceptez de nous fournir pour améliorer l'expérience</p>
+    <label><input type="checkbox" id="url">Domaine visités</label><br>
+    <label><input type="checkbox" id="temps">Temps passé par onglet</label><br>
+    <label><input type="checkbox" id="onglet">Changements d'onglet</label><br>
+    <label><input type="checkbox" id="nbOnglet">Nombre d'onglet ouvert</label><br>
+    <label><input type="checkbox" id="periode">Periode d'ouverture/fermeture de l'extension</label><br>
+    <label><input type="checkbox" id="ajout_supp">Ajout/suppression de notes</label><br>
+    <label><input type="checkbox" id="activite">Activité/inactivité utilisateur</label><br>
+    
+    
+    <button id="accepter">Accepter</button>
+    <button id="refuser">Refuser</button>
+    
+    <p>Si vous refusez, l'extension fonctionnera normalement sans aucune collecte de navigation</p>
+</body>
+
+</html>

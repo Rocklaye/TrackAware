@@ -8,6 +8,18 @@ const keys =[
     "activite"
 
 ];
+
+// 🔄 Pré-cocher les cases selon le consentement sauvegardé
+chrome.storage.local.get(["consent"], (res) => {
+  const saved = res.consent;
+  if (!saved) return;
+
+  keys.forEach((k) => {
+    const el = document.getElementById(k);
+    if (el) el.checked = !!saved[k];
+  });
+});
+
 //Sauvegarder le choix de l'utilisateur et le rediriger vers popup
 function save(consent) {
   // Ajoute des données techniques obligatoires ici 

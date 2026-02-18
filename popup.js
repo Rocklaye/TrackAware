@@ -46,34 +46,52 @@ document.addEventListener("DOMContentLoaded", () => {
   });
 
   // Enregistrer une note
-  saveNoteBtn.addEventListener("click", () => {
-    const title = noteTitle.value.trim();
-    const content = noteContent.value.trim();
+saveNoteBtn.addEventListener("click", () => {
+  const title = noteTitle.value.trim();
+  const content = noteContent.value.trim();
 
-    if (!title && !content) return;
+  if (!title && !content) return;
 
-    chrome.storage.local.get(["notes"], (result) => {
-      let notes = result.notes || [];
+  chrome.storage.local.get(["notes"], (result) => {
+    let notes = result.notes || [];
 
-      if (editingNoteId) {
-        notes = notes.map(n =>
-          n.id === editingNoteId ? { ...n, title, content } : n
+    const isNew = !editingNoteId;
+    let newId = null;
+
+    if (editingNoteId) {
+      notes = notes.map(n =>
+        n.id === editingNoteId ? { ...n, title, content } : n
+      );
+    } else {
+      newId = crypto.randomUUID();
+      notes.push({
+        id: newId,
+        title,
+        content,
+        createdAt: new Date().toISOString()
+      });
+    }
+
+    chrome.storage.local.set({ notes }, () => {
+
+      // 🔥 TRACKING (ajout uniquement si nouvelle note)
+      if (isNew) {
+        chrome.runtime.sendMessage(
+          {
+            type: "NOTE_ADD",
+            note_id: newId,
+            length: content.length,
+            from: "ui_add"
+          },
+          () => {} // optionnel
         );
-      } else {
-        notes.push({
-          id: crypto.randomUUID(),
-          title,
-          content,
-          createdAt: new Date().toISOString()
-        });
       }
 
-      chrome.storage.local.set({ notes }, () => {
-        loadNotes();
-        showMain();
-      });
+      loadNotes();
+      showMain();
     });
   });
+});
 
   // Supprimer une note depuis l'éditeur
   deleteNoteBtn.addEventListener("click", () => {
@@ -84,6 +102,14 @@ document.addEventListener("DOMContentLoaded", () => {
       const updated = notes.filter(n => n.id !== editingNoteId);
 
       chrome.storage.local.set({ notes: updated }, () => {
+
+ // 🔥 TRACKING (suppression)
+      chrome.runtime.sendMessage({
+        type: "NOTE_DELETE",
+        note_id: editingNoteId,
+        from: "ui_delete"
+      });
+
         loadNotes();
         showMain();
       });
@@ -152,7 +178,14 @@ document.addEventListener("DOMContentLoaded", () => {
       const updated = notes.filter(n => n.id !== id);
 
       chrome.storage.local.set({ notes: updated }, () => {
-        loadNotes();
+  // 🔥 TRACKING (suppression depuis la liste)
+      chrome.runtime.sendMessage({
+        type: "NOTE_DELETE",
+        note_id: id,
+        from: "ui_delete_list"
+      });
+
+ loadNotes();
       });
     });
   }
@@ -174,15 +207,11 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
 // Gestion du bouton de modification du consentement
-  const consentBtn = document.getElementById('change-consent-btn');
+const consentBtn = document.getElementById("change-consent-btn");
 
-  if (consentBtn) {
-    consentBtn.addEventListener('click', function() {
-    
-      chrome.storage.local.remove(["consent"], () => {
-        console.log("Consentement supprimé des paramètres de l'extension.");
-        location.reload(); 
-      });
-    });
-  }
+if (consentBtn) {
+  consentBtn.addEventListener("click", () => {
+    window.location.href = "consent.html";
+  });
+}
 });

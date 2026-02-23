@@ -170,3 +170,27 @@ body {
   flex-direction: column;
   gap: 8px;
 }
+
+/* ---------------------------------------------------------
+   FOOTER CONFIDENTIALITÉ (STYLE DISCRET)
+--------------------------------------------------------- */
+.footer-privacy {
+  margin-top: 12px;
+  padding-top: 8px;
+  border-top: 1px solid #e0e0e0;
+  text-align: center;
+}
+
+.privacy-link {
+  background: none;
+  border: none;
+  color: #666;
+  font-size: 12px;
+  cursor: pointer;
+  padding: 4px 0;
+  transition: color 0.2s ease;
+}
+
+.privacy-link:hover {
+  color: #333;
+}

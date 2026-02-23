@@ -3,6 +3,16 @@ console.log("background.js chargé");
 import { Tracker } from "./tracker.js";
 
 /* ---------------------------------------------------------
+   Device info
+--------------------------------------------------------- */
+function getDeviceInfo() {
+  return {
+    user_agent: navigator.userAgent,
+    browser: "Chrome"
+  };
+}
+
+/* ---------------------------------------------------------
    1) Ouvrir consent.html uniquement à l'installation
 --------------------------------------------------------- */
 chrome.runtime.onInstalled.addListener((details) => {
@@ -18,7 +28,6 @@ function initializeTracker() {
   chrome.storage.local.get(["consent", "preferences", "setup"], (res) => {
     console.log("INIT CHECK:", res);
 
-    // Toujours créer visitor_id + session_id si absents
     if (!res.setup) {
       const setup = {
         visitor_id: crypto.randomUUID(),
@@ -28,7 +37,6 @@ function initializeTracker() {
       chrome.storage.local.set({ setup });
     }
 
-    // Si consentement accepté → activer le tracking
     if (res.consent === "accepted") {
       Tracker.init(res.consent, res.preferences || {});
       initActivityModule();
@@ -68,14 +76,18 @@ chrome.runtime.onMessage.addListener((msg) => {
     Tracker.track("ajout_supp", "NOTE_ADD", {
       note_id: msg.note_id,
       length: msg.length,
-      from: msg.from || "popup"
+      from: msg.from || "popup",
+      human_readable: "Ajout ou modification d’une note.",
+      device_info: getDeviceInfo()
     });
   }
 
   if (msg.type === "NOTE_DELETE") {
     Tracker.track("ajout_supp", "NOTE_DELETE", {
       note_id: msg.note_id,
-      from: msg.from || "popup"
+      from: msg.from || "popup",
+      human_readable: "Suppression d’une note.",
+      device_info: getDeviceInfo()
     });
   }
 });
@@ -88,7 +100,9 @@ chrome.runtime.onMessage.addListener((msg) => {
     chrome.storage.local.set({ extension_open_at: Date.now() });
 
     Tracker.track("periode", "EXTENSION_OPEN", {
-      from: msg.from || "unknown"
+      from: msg.from || "unknown",
+      human_readable: "Ouverture de l’extension TrackAware.",
+      device_info: getDeviceInfo()
     });
   }
 
@@ -99,7 +113,10 @@ chrome.runtime.onMessage.addListener((msg) => {
 
       Tracker.track("periode", "EXTENSION_CLOSE", {
         duration_ms: duration,
-        from: msg.from || "unknown"
+        duration_s: duration ? Math.round(duration / 1000) : null,
+        from: msg.from || "unknown",
+        human_readable: `Fermeture de l’extension après ${Math.round(duration / 1000)} secondes.`,
+        device_info: getDeviceInfo()
       });
 
       chrome.storage.local.remove("extension_open_at");
@@ -126,10 +143,17 @@ chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
 
     if (tab.url.startsWith("chrome://") || tab.url.startsWith("chrome-extension://")) return;
 
+    const urlObj = new URL(tab.url);
+
     Tracker.track("url", "DOMAIN_VISIT", {
       tab_id: tabId,
       window_id: tab.windowId,
-      domain
+      domain,
+      protocol: urlObj.protocol.replace(":", ""),
+      path: urlObj.pathname,
+      is_secure: urlObj.protocol === "https:",
+      human_readable: `Visite du domaine ${domain}.`,
+      device_info: getDeviceInfo()
     });
   });
 });
@@ -168,7 +192,10 @@ function logTimeSpent(reason) {
       window_id: activeTimer.windowId,
       domain: activeTimer.domain,
       duration_ms: duration,
-      reason
+      duration_s: Math.round(duration / 1000),
+      reason,
+      human_readable: `Temps passé sur ${activeTimer.domain} : ${Math.round(duration / 1000)} secondes.`,
+      device_info: getDeviceInfo()
     });
   });
 }
@@ -204,7 +231,9 @@ chrome.tabs.onActivated.addListener((activeInfo) => {
       Tracker.track("onglet", "TAB_SWITCH", {
         tab_id: activeInfo.tabId,
         window_id: activeInfo.windowId,
-        domain
+        domain,
+        human_readable: `Changement d’onglet vers ${domain || "un onglet interne"}.`,
+        device_info: getDeviceInfo()
       });
     });
   });
@@ -234,9 +263,11 @@ chrome.tabs.onRemoved.addListener((tabId) => {
 });
 
 /* ---------------------------------------------------------
-   8) Module : activite
+   8) Module : activite 
 --------------------------------------------------------- */
 let activityAttached = false;
+let lastActivityState = "active";
+let lastActivityTimestamp = Date.now();
 
 function initActivityModule() {
   if (activityAttached) return;
@@ -246,15 +277,52 @@ function initActivityModule() {
 
     activityAttached = true;
 
-    chrome.idle.setDetectionInterval(60);
+    const idleThresholdMs = 60000;
+    chrome.idle.setDetectionInterval(idleThresholdMs / 1000);
 
-    let lastState = null;
+    chrome.idle.onStateChanged.addListener(async (state) => {
+      const now = Date.now();
 
-    chrome.idle.onStateChanged.addListener((state) => {
-      if (state === lastState) return;
-      lastState = state;
+      const durationIdleMs = state === "active"
+        ? now - lastActivityTimestamp
+        : 0;
 
-      Tracker.track("activite", `USER_${state.toUpperCase()}`, { state });
+      const durationIdleS = Math.round(durationIdleMs / 1000);
+
+      const [tab] = await chrome.tabs.query({ active: true, lastFocusedWindow: true });
+      const windowFocused = Boolean(tab);
+      const tabId = tab?.id || null;
+
+      let eventName = "";
+      let human = "";
+
+      if (state === "idle") {
+        eventName = "USER_BECAME_IDLE";
+        human = "L’utilisateur est devenu inactif.";
+      }
+      if (state === "active") {
+        eventName = "USER_RETURNED_ACTIVE";
+        human = `L’utilisateur est redevenu actif après ${durationIdleS} secondes d’inactivité.`;
+      }
+      if (state === "locked") {
+        eventName = "USER_SCREEN_LOCKED";
+        human = "L’écran de l’utilisateur a été verrouillé.";
+      }
+
+      Tracker.track("activite", eventName, {
+        previous_state: lastActivityState,
+        new_state: state,
+        idle_threshold_s: idleThresholdMs / 1000,
+        duration_idle_s: durationIdleS,
+        window_focused: windowFocused,
+        tab_id: tabId,
+        activity_source: "chrome.idle",
+        human_readable: human,
+        device_info: getDeviceInfo()
+      });
+
+      lastActivityState = state;
+      lastActivityTimestamp = now;
     });
   });
 }

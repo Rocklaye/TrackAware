@@ -1,50 +1,62 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Préférences de confidentialité - TrackAware</title>
-    <link rel="stylesheet" href="style.css">
-    <script src="consent.js" defer></script>
+  <meta charset="UTF-8">
+  <title>Confidentialité – TrackAware</title>
+  <link rel="stylesheet" href="consent.css">
 </head>
 
 <body>
 
-    <h1 class="header-title">Préférences de confidentialité</h1>
+  <div class="container">
 
-    <section class="consent-section">
-        <h3>Informations techniques générées automatiquement</h3>
-        <p>
-            Pour fonctionner, l’extension génère localement :
-        </p>
-        <ul>
-            <li>Un identifiant visiteur (visitor_id)</li>
-            <li>Un identifiant de session (session_id)</li>
-            <li>Un horodatage précis</li>
-        </ul>
-        <p>Aucune donnée n’est envoyée à l’extérieur de votre navigateur.</p>
-    </section>
+    <h1 class="title">Confidentialité & Transparence</h1>
 
-    <section class="consent-section">
-        <h3>Données optionnelles que vous pouvez autoriser</h3>
-
-        <label><input type="checkbox" id="url"> Domaines visités</label><br>
-        <label><input type="checkbox" id="temps"> Temps passé sur chaque site</label><br>
-        <label><input type="checkbox" id="onglet"> Changements d’onglet</label><br>
-        <label><input type="checkbox" id="nbOnglet"> Nombre d’onglets ouverts</label><br>
-        <label><input type="checkbox" id="periode"> Ouverture/fermeture de l’extension</label><br>
-        <label><input type="checkbox" id="ajout_supp"> Ajout / suppression de notes</label><br>
-        <label><input type="checkbox" id="activite"> Activité / inactivité utilisateur</label><br>
-    </section>
-
-    <div class="consent-actions">
-        <button id="accepter" class="save-btn">Accepter</button>
-        <button id="refuser" class="back-btn">Refuser</button>
-    </div>
-
-    <p class="consent-note">
-        Si vous refusez, l’extension fonctionnera normalement sans aucune collecte de navigation.
+    <p class="intro">
+      TrackAware fonctionne entièrement <strong>en local</strong> sur votre navigateur.
+      Aucune donnée n’est envoyée à un serveur externe.
+      Vous gardez le contrôle total sur ce qui est collecté.
     </p>
 
+    <h2 class="section-title">Données techniques nécessaires</h2>
+
+    <p class="section-desc">
+      Pour fonctionner correctement, l’extension génère localement :
+    </p>
+
+    <ul class="tech-list">
+      <li>Un identifiant visiteur unique</li>
+      <li>Un identifiant de session</li>
+      <li>Un horodatage précis pour chaque événement</li>
+    </ul>
+
+    <p class="note">
+      Ces données ne quittent jamais votre navigateur.
+    </p>
+
+    <h2 class="section-title">Données optionnelles (à votre choix)</h2>
+
+    <p class="section-desc">
+      Vous pouvez activer ou désactiver chaque catégorie de collecte.
+    </p>
+
+    <div class="checkbox-group">
+      <label><input type="checkbox" id="url"> Domaines visités</label>
+      <label><input type="checkbox" id="temps"> Temps passé sur chaque site</label>
+      <label><input type="checkbox" id="onglet"> Changements d’onglet</label>
+      <label><input type="checkbox" id="nbOnglet"> Nombre d’onglets ouverts</label>
+      <label><input type="checkbox" id="periode"> Ouverture / fermeture de l’extension</label>
+      <label><input type="checkbox" id="ajout_supp"> Ajout / suppression de notes</label>
+      <label><input type="checkbox" id="activite"> Activité / inactivité utilisateur</label>
+    </div>
+
+    <div class="buttons">
+      <button id="accepter" class="btn accept">Accepter</button>
+      <button id="refuser" class="btn refuse">Refuser</button>
+    </div>
+
+  </div>
+
+  <script src="consent.js"></script>
 </body>
 </html>

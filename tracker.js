@@ -3,6 +3,7 @@ export const Tracker = {
   preferences: {},
   sessionId: null,
   visitorId: null,
+  eventIndex: 0,
 
   /* ---------------------------------------------------------
      Initialisation du tracker
@@ -41,11 +42,14 @@ export const Tracker = {
   --------------------------------------------------------- */
   log(category, event, details = {}) {
     const entry = {
+      event_id: crypto.randomUUID(),
       timestamp: new Date().toISOString(),
       category,
       event,
       session_id: this.sessionId,
       visitor_id: this.visitorId,
+      session_event_index: this.eventIndex++,
+      extension_version: chrome.runtime.getManifest().version,
       details
     };
 

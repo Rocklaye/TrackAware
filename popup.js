@@ -17,7 +17,7 @@ document.addEventListener("DOMContentLoaded", () => {
   let editingNoteId = null;
 
   /* ---------------------------------------------------------
-     0) Tracking : ouverture de l'extension
+     0) Tracking : ouverture / fermeture de l'extension
   --------------------------------------------------------- */
   chrome.runtime.sendMessage({
     type: "EXTENSION_OPEN",
@@ -81,7 +81,6 @@ document.addEventListener("DOMContentLoaded", () => {
       }
 
       chrome.storage.local.set({ notes }, () => {
-        // Tracking NOTE_ADD / NOTE_UPDATE
         chrome.runtime.sendMessage({
           type: "NOTE_ADD",
           note_id: noteId,
@@ -106,7 +105,6 @@ document.addEventListener("DOMContentLoaded", () => {
       const updated = notes.filter(n => n.id !== editingNoteId);
 
       chrome.storage.local.set({ notes: updated }, () => {
-        // Tracking NOTE_DELETE
         chrome.runtime.sendMessage({
           type: "NOTE_DELETE",
           note_id: editingNoteId,
@@ -182,5 +180,15 @@ document.addEventListener("DOMContentLoaded", () => {
   function showMain() {
     editorView.classList.add("hidden");
     mainView.classList.remove("hidden");
+  }
+
+  /* ---------------------------------------------------------
+     9) Bouton Confidentialité 
+  --------------------------------------------------------- */
+  const privacyBtn = document.getElementById("privacyBtn");
+  if (privacyBtn) {
+    privacyBtn.addEventListener("click", () => {
+      chrome.tabs.create({ url: "consent.html" });
+    });
   }
 });

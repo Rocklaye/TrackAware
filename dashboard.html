@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>TrackAware — Dashboard</title>
+    <link rel="stylesheet" href="dashboard.css">
+</head>
+
+<body>
+
+    <h1>📊 Dashboard TrackAware</h1>
+
+    <button id="backBtn">⬅ Retour</button>
+
+    <section class="filters">
+        <h2>Filtres</h2>
+
+        <label>Type d’événement :
+            <select id="filterEventType">
+                <option value="">Tous</option>
+            </select>
+        </label>
+
+        <label>Date :
+            <input type="date" id="filterDate">
+        </label>
+
+        <label>Session :
+            <select id="filterSession">
+                <option value="">Toutes</option>
+            </select>
+        </label>
+
+        <label>Visitor ID :
+            <select id="filterVisitor">
+                <option value="">Tous</option>
+            </select>
+        </label>
+
+        <button id="resetFilters">Réinitialiser</button>
+    </section>
+
+    <section>
+        <h2>📜 Liste des événements</h2>
+        <table id="logsTable">
+            <thead>
+                <tr>
+                    <th>Heure</th>
+                    <th>Événement</th>
+                    <th>Détails</th>
+                    <th>Session</th>
+                    <th>Visitor</th>
+                </tr>
+            </thead>
+            <tbody></tbody>
+        </table>
+    </section>
+
+    <section>
+        <h2>⚖️ Comparaison : Consentement</h2>
+
+        <button id="showAccepted">Consentement accepté</button>
+        <button id="showRefused">Consentement refusé</button>
+
+        <div id="consentComparison"></div>
+    </section>
+
+    <section>
+        <h2>🧠 Ce que l’extension peut déduire</h2>
+        <ul id="insights"></ul>
+    </section>
+
+    <script src="dashboard.js"></script>
+</body>
+</html>

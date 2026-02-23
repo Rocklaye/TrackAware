@@ -1,19 +1,25 @@
-/* GLOBAL */
+/* ---------------------------------------------------------
+   GLOBAL
+--------------------------------------------------------- */
 body {
   font-family: Arial, sans-serif;
   width: 330px;
   padding: 12px;
   background: #f7f7f7;
   box-sizing: border-box;
+  margin: 0;
 }
 
-h1 {
+.header-title {
   text-align: center;
   margin-bottom: 12px;
   font-size: 18px;
+  font-weight: bold;
 }
 
-/* SEARCH BAR */
+/* ---------------------------------------------------------
+   SEARCH BAR
+--------------------------------------------------------- */
 .search-input {
   width: 100%;
   padding: 8px;
@@ -21,44 +27,49 @@ h1 {
   border-radius: 6px;
   border: 1px solid #ccc;
   box-sizing: border-box;
+  font-size: 14px;
 }
 
-/* ADD BUTTON */
+/* ---------------------------------------------------------
+   ADD BUTTON
+--------------------------------------------------------- */
 .add-btn {
-  width: 40px;
-  height: 40px;
-  border-radius: 50%;
+  width: 100%;
+  padding: 10px;
   background: #4a90e2;
   color: white;
   border: none;
-  font-size: 22px;
+  border-radius: 6px;
+  font-size: 14px;
   cursor: pointer;
-  display: block;
-  margin: 0 auto 12px auto;
-  box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+  margin-bottom: 12px;
+  transition: background 0.2s ease;
 }
 
 .add-btn:hover {
   background: #357ac9;
 }
 
-/* NOTES GRID */
+/* ---------------------------------------------------------
+   NOTES GRID
+--------------------------------------------------------- */
 .notes-grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 8px;
 }
 
-/* NOTE CARD (REDUITES) */
+/* ---------------------------------------------------------
+   NOTE CARD
+--------------------------------------------------------- */
 .note-card {
   background: white;
-  padding: 8px;
+  padding: 10px;
   border-radius: 6px;
   cursor: pointer;
   border: 1px solid #ddd;
-  min-height: 55px;
-  position: relative;
-  transition: 0.2s;
+  min-height: 60px;
+  transition: background 0.2s ease;
   font-size: 13px;
   display: flex;
   align-items: flex-start;
@@ -69,22 +80,14 @@ h1 {
   background: #f0f0f0;
 }
 
-/* DELETE ICON (HOVER ONLY) */
-.note-card .delete-icon {
-  position: absolute;
-  top: 4px;
-  right: 4px;
-  font-size: 14px;
-  color: #e74c3c;
-  display: none;
-  cursor: pointer;
+.note-title {
+  font-weight: bold;
+  line-height: 1.2;
 }
 
-.note-card:hover .delete-icon {
-  display: block;
-}
-
-/* EDITOR VIEW */
+/* ---------------------------------------------------------
+   EDITOR VIEW
+--------------------------------------------------------- */
 .editor-wrapper {
   display: flex;
   flex-direction: column;
@@ -117,8 +120,12 @@ h1 {
   box-sizing: border-box;
 }
 
-/* BUTTONS */
-.save-btn, .back-btn, .delete-btn {
+/* ---------------------------------------------------------
+   BUTTONS
+--------------------------------------------------------- */
+.save-btn,
+.back-btn,
+.delete-btn {
   width: 100%;
   padding: 10px;
   border: none;
@@ -133,9 +140,17 @@ h1 {
   color: white;
 }
 
+.save-btn:hover {
+  background: #357ac9;
+}
+
 .back-btn {
   background: #555;
   color: white;
+}
+
+.back-btn:hover {
+  background: #444;
 }
 
 .delete-btn {
@@ -146,39 +161,12 @@ h1 {
 .delete-btn:hover {
   background: #c0392b;
 }
-/* Style pour le conteneur du bouton en bas de page */
-footer {
-    margin-top: 30px;
-    padding: 15px;
-    border-top: 1px solid #eee;
-    display: flex;
-    justify-content: center;
-}
 
-/* Style du bouton "Modifier mes préférences" */
-#change-consent-btn {
-    background-color: transparent;
-    color: #666;
-    border: 1px solid #ccc;
-    padding: 8px 16px;
-    border-radius: 20px; /* Bord arrondi pour un look moderne */
-    font-size: 12px;
-    cursor: pointer;
-    transition: all 0.3s ease;
-}
-
-/* Effet au survol */
-#change-consent-btn:hover {
-    background-color: #f5f5f5;
-    color: #333;
-    border-color: #999;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-}
-
-/* Style spécifique pour la version mobile/popup étroite */
-@media (max-width: 400px) {
-    #change-consent-btn {
-        width: 100%;
-        font-size: 11px;
-    }
+/* ---------------------------------------------------------
+   EDITOR ACTIONS
+--------------------------------------------------------- */
+.editor-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
 }

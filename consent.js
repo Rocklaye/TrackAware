@@ -1,55 +1,93 @@
-const keys =[
-    "url",
-    "temps",
-    "onglet",
-    "nbOnglet",
-    "periode",
-    "ajout_supp",
-    "activite"
-
+const keys = [
+  "url",
+  "temps",
+  "onglet",
+  "nbOnglet",
+  "periode",
+  "ajout_supp",
+  "activite"
 ];
 
-// 🔄 Pré-cocher les cases selon le consentement sauvegardé
-chrome.storage.local.get(["consent"], (res) => {
-  const saved = res.consent;
-  if (!saved) return;
+/* ---------------------------------------------------------
+   1) Pré-cocher les cases selon les préférences existantes
+--------------------------------------------------------- */
+chrome.storage.local.get(["preferences"], (res) => {
+  const saved = res.preferences || {};
 
   keys.forEach((k) => {
     const el = document.getElementById(k);
-    if (el) el.checked = !!saved[k];
+    if (el) el.checked = Boolean(saved[k]);
   });
 });
 
-//Sauvegarder le choix de l'utilisateur et le rediriger vers popup
-function save(consent) {
-  // Ajoute des données techniques obligatoires ici 
-  const technicalData = {
-    visitor_id: self.crypto.randomUUID(), // UUID 
-    session_id: Date.now(), // Un ID de session basé sur le temps 
-    timestamp: new Date().toISOString() // Timestamp 
-  };
-  chrome.storage.local.set({ consent, setup: technicalData }, () =>  {
-    window.location.href = "popup.html";
+/* ---------------------------------------------------------
+   2) Mise à jour en temps réel des préférences
+--------------------------------------------------------- */
+keys.forEach((k) => {
+  const el = document.getElementById(k);
+  if (!el) return;
+
+  el.addEventListener("change", () => {
+    chrome.storage.local.get(["preferences"], (res) => {
+      const prefs = res.preferences || {};
+      prefs[k] = el.checked;
+
+      chrome.storage.local.set({ preferences: prefs }, () => {
+        chrome.runtime.sendMessage({
+          type: "PREFERENCES_UPDATE",
+          preferences: prefs
+        });
+      });
+    });
   });
-}
-document.getElementById("accepter").onclick = () => {
+});
 
-  const consent = {};
-
+/* ---------------------------------------------------------
+   3) Fonction de sauvegarde globale (accept/refuse)
+--------------------------------------------------------- */
+function save(consentValue) {
+  const preferences = {};
   keys.forEach(k => {
-    consent[k] = document.getElementById(k).checked;
+    const el = document.getElementById(k);
+    preferences[k] = el ? el.checked : false;
   });
 
-  save(consent);
+  const technicalData = {
+    visitor_id: crypto.randomUUID(),
+    session_id: Date.now(),
+    timestamp: new Date().toISOString()
+  };
 
-};
+  chrome.storage.local.set(
+    {
+      consent: consentValue,
+      preferences,
+      setup: technicalData
+    },
+    () => {
+      chrome.runtime.sendMessage({
+        type: "CONSENT_UPDATE",
+        value: consentValue,
+        preferences
+      });
 
-document.getElementById("refuser").onclick = () => {
+      window.close();
+    }
+  );
+}
 
-  const consent = {};
+/* ---------------------------------------------------------
+   4) Boutons Accepter / Refuser
+--------------------------------------------------------- */
+document.getElementById("accepter").addEventListener("click", () => {
+  save("accepted");
+});
 
-  keys.forEach(k => consent[k] = false);
+document.getElementById("refuser").addEventListener("click", () => {
+  keys.forEach(k => {
+    const el = document.getElementById(k);
+    if (el) el.checked = false;
+  });
 
-  save(consent);
-
-};
+  save("refused");
+});

@@ -1,5 +1,4 @@
 document.addEventListener("DOMContentLoaded", () => {
-
   const mainView = document.getElementById("mainView");
   const editorView = document.getElementById("editorView");
 
@@ -17,22 +16,29 @@ document.addEventListener("DOMContentLoaded", () => {
 
   let editingNoteId = null;
 
-  chrome.storage.local.get(["consent"], (res) => {
+  /* ---------------------------------------------------------
+     0) Tracking : ouverture de l'extension
+  --------------------------------------------------------- */
+  chrome.runtime.sendMessage({
+    type: "EXTENSION_OPEN",
+    from: "popup"
+  });
 
-  // Si pas de consentement enregistré → ouvrir page consentement
-  if (!res.consent) {
-    window.location.href = "consent.html";
-    return;
-  }
+  window.addEventListener("unload", () => {
+    chrome.runtime.sendMessage({
+      type: "EXTENSION_CLOSE",
+      from: "popup"
+    });
+  });
 
-  // Sinon, initialiser le tracker avec le consent existant
-  Tracker.init(res.consent);
-  
-});
-
+  /* ---------------------------------------------------------
+     1) Charger les notes au démarrage
+  --------------------------------------------------------- */
   loadNotes();
 
-  // Ouvrir l'éditeur pour une nouvelle note
+  /* ---------------------------------------------------------
+     2) Ajouter une note
+  --------------------------------------------------------- */
   addNoteBtn.addEventListener("click", () => {
     editingNoteId = null;
     noteTitle.value = "";
@@ -40,60 +46,58 @@ document.addEventListener("DOMContentLoaded", () => {
     showEditor();
   });
 
-  // Retour au menu
+  /* ---------------------------------------------------------
+     3) Retour à la liste
+  --------------------------------------------------------- */
   backBtn.addEventListener("click", () => {
     showMain();
   });
 
-  // Enregistrer une note
-saveNoteBtn.addEventListener("click", () => {
-  const title = noteTitle.value.trim();
-  const content = noteContent.value.trim();
+  /* ---------------------------------------------------------
+     4) Enregistrer une note
+  --------------------------------------------------------- */
+  saveNoteBtn.addEventListener("click", () => {
+    const title = noteTitle.value.trim();
+    const content = noteContent.value.trim();
 
-  if (!title && !content) return;
+    if (!title && !content) return;
 
-  chrome.storage.local.get(["notes"], (result) => {
-    let notes = result.notes || [];
+    chrome.storage.local.get(["notes"], (result) => {
+      let notes = result.notes || [];
+      let noteId = editingNoteId;
 
-    const isNew = !editingNoteId;
-    let newId = null;
-
-    if (editingNoteId) {
-      notes = notes.map(n =>
-        n.id === editingNoteId ? { ...n, title, content } : n
-      );
-    } else {
-      newId = crypto.randomUUID();
-      notes.push({
-        id: newId,
-        title,
-        content,
-        createdAt: new Date().toISOString()
-      });
-    }
-
-    chrome.storage.local.set({ notes }, () => {
-
-      // 🔥 TRACKING (ajout uniquement si nouvelle note)
-      if (isNew) {
-        chrome.runtime.sendMessage(
-          {
-            type: "NOTE_ADD",
-            note_id: newId,
-            length: content.length,
-            from: "ui_add"
-          },
-          () => {} // optionnel
+      if (editingNoteId) {
+        notes = notes.map(n =>
+          n.id === editingNoteId ? { ...n, title, content } : n
         );
+      } else {
+        noteId = crypto.randomUUID();
+        notes.push({
+          id: noteId,
+          title,
+          content,
+          createdAt: new Date().toISOString()
+        });
       }
 
-      loadNotes();
-      showMain();
+      chrome.storage.local.set({ notes }, () => {
+        // Tracking NOTE_ADD / NOTE_UPDATE
+        chrome.runtime.sendMessage({
+          type: "NOTE_ADD",
+          note_id: noteId,
+          length: content.length,
+          from: "popup"
+        });
+
+        loadNotes();
+        showMain();
+      });
     });
   });
-});
 
-  // Supprimer une note depuis l'éditeur
+  /* ---------------------------------------------------------
+     5) Supprimer une note
+  --------------------------------------------------------- */
   deleteNoteBtn.addEventListener("click", () => {
     if (!editingNoteId) return;
 
@@ -102,13 +106,12 @@ saveNoteBtn.addEventListener("click", () => {
       const updated = notes.filter(n => n.id !== editingNoteId);
 
       chrome.storage.local.set({ notes: updated }, () => {
-
- // 🔥 TRACKING (suppression)
-      chrome.runtime.sendMessage({
-        type: "NOTE_DELETE",
-        note_id: editingNoteId,
-        from: "ui_delete"
-      });
+        // Tracking NOTE_DELETE
+        chrome.runtime.sendMessage({
+          type: "NOTE_DELETE",
+          note_id: editingNoteId,
+          from: "popup"
+        });
 
         loadNotes();
         showMain();
@@ -116,7 +119,9 @@ saveNoteBtn.addEventListener("click", () => {
     });
   });
 
-  // Recherche en temps réel
+  /* ---------------------------------------------------------
+     6) Recherche
+  --------------------------------------------------------- */
   searchInput.addEventListener("input", () => {
     const query = searchInput.value.toLowerCase();
 
@@ -130,7 +135,9 @@ saveNoteBtn.addEventListener("click", () => {
     });
   });
 
-  // Charger les notes
+  /* ---------------------------------------------------------
+     7) Affichage des notes
+  --------------------------------------------------------- */
   function loadNotes() {
     chrome.storage.local.get(["notes"], (result) => {
       const notes = result.notes || [];
@@ -149,17 +156,7 @@ saveNoteBtn.addEventListener("click", () => {
       title.textContent = note.title || "(Sans titre)";
       title.className = "note-title";
 
-      const deleteIcon = document.createElement("span");
-      deleteIcon.textContent = "🗑️";
-      deleteIcon.className = "delete-icon";
-
-      deleteIcon.addEventListener("click", (e) => {
-        e.stopPropagation();
-        deleteNote(note.id);
-      });
-
       card.appendChild(title);
-      card.appendChild(deleteIcon);
 
       card.addEventListener("click", () => {
         editingNoteId = note.id;
@@ -172,46 +169,18 @@ saveNoteBtn.addEventListener("click", () => {
     });
   }
 
-  function deleteNote(id) {
-    chrome.storage.local.get(["notes"], (result) => {
-      const notes = result.notes || [];
-      const updated = notes.filter(n => n.id !== id);
-
-      chrome.storage.local.set({ notes: updated }, () => {
-  // 🔥 TRACKING (suppression depuis la liste)
-      chrome.runtime.sendMessage({
-        type: "NOTE_DELETE",
-        note_id: id,
-        from: "ui_delete_list"
-      });
-
- loadNotes();
-      });
-    });
-  }
-
+  /* ---------------------------------------------------------
+     8) Gestion des vues
+  --------------------------------------------------------- */
   function showEditor() {
     mainView.classList.add("hidden");
     editorView.classList.remove("hidden");
 
-    if (editingNoteId) {
-      deleteNoteBtn.classList.remove("hidden");
-    } else {
-      deleteNoteBtn.classList.add("hidden");
-    }
+    deleteNoteBtn.classList.toggle("hidden", !editingNoteId);
   }
 
   function showMain() {
     editorView.classList.add("hidden");
     mainView.classList.remove("hidden");
   }
-
-// Gestion du bouton de modification du consentement
-const consentBtn = document.getElementById("change-consent-btn");
-
-if (consentBtn) {
-  consentBtn.addEventListener("click", () => {
-    window.location.href = "consent.html";
-  });
-}
 });

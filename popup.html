@@ -1,42 +1,41 @@
 <!DOCTYPE html>
 <html lang="fr">
+
 <head>
   <meta charset="UTF-8">
   <title>TrackAware - Notes</title>
   <link rel="stylesheet" href="style.css">
 </head>
+
 <body>
 
-  <!-- Vue 1 : Menu principal -->
+  <!-- Vue principale : liste des notes -->
   <div id="mainView">
-    <h1>Mes Notes</h1>
+    <h1 class="header-title">Mes Notes</h1>
 
     <input id="searchInput" type="text" placeholder="Rechercher une note..." class="search-input">
 
-    <button id="addNoteBtn" class="add-btn">+</button>
+    <button id="addNoteBtn" class="add-btn">Nouvelle note</button>
 
     <div id="notesContainer" class="notes-grid"></div>
   </div>
 
-  <!-- Vue 2 : Éditeur -->
+  <!-- Vue éditeur -->
   <div id="editorView" class="hidden editor-wrapper">
-    <button id="backBtn" class="back-btn">← Retour</button>
+    <button id="backBtn" class="back-btn">Retour</button>
 
     <input id="noteTitle" type="text" placeholder="Titre de la note" class="title-input">
 
     <textarea id="noteContent" placeholder="Écrire votre note ici..." class="content-input"></textarea>
 
-    <button id="saveNoteBtn" class="save-btn">Enregistrer</button>
-    <button id="deleteNoteBtn" class="delete-btn hidden">🗑️ Supprimer</button>
+    <div class="editor-actions">
+      <button id="saveNoteBtn" class="save-btn">Enregistrer</button>
+      <button id="deleteNoteBtn" class="delete-btn hidden">Supprimer</button>
+    </div>
   </div>
 
-   <footer style="margin-top: 20px; text-align: center;">
-    <button id="change-consent-btn" class="secondary-btn">⚙️Modifier mes préférences cookies</button>
-  </footer>
+  <script src="popup.js"></script>
 
-  
- 
 </body>
-<script src="tracker.js"></script>
-<script src="popup.js"></script>
+
 </html>

@@ -1,46 +1,71 @@
-const Tracker = {
-  consent: {},
+export const Tracker = {
+  consent: "refused",
+  preferences: {},
   sessionId: null,
   visitorId: null,
 
-  init(consent) {
-    this.consent = consent || {};
+  /* ---------------------------------------------------------
+     Initialisation du tracker
+  --------------------------------------------------------- */
+  init(consent, preferences = {}) {
+    this.consent = consent;
+    this.preferences = preferences;
 
-    // On récupère les identifiants techniques générés à l'Étape 2
-    chrome.storage.local.get(["setup"], res => {
+    chrome.storage.local.get(["setup"], (res) => {
       if (res.setup) {
         this.visitorId = res.setup.visitor_id;
         this.sessionId = res.setup.session_id;
       } else {
-        // Sécurité au cas où le setup n'existe pas encore
-        this.visitorId = "guest";
+        this.visitorId = crypto.randomUUID();
         this.sessionId = Date.now();
       }
 
-      this.log("session_start");
+      this.log("SYSTEM", "SESSION_START", {});
     });
   },
 
-  log(event, data = {}) {
+  /* ---------------------------------------------------------
+     Mise à jour du consentement
+  --------------------------------------------------------- */
+  updateConsent(consent, preferences = {}) {
+    this.consent = consent;
+    this.preferences = preferences;
+  },
+
+  updatePreferences(preferences = {}) {
+    this.preferences = preferences;
+  },
+
+  /* ---------------------------------------------------------
+     Log normalisé (format SIEM)
+  --------------------------------------------------------- */
+  log(category, event, details = {}) {
     const entry = {
-      time: new Date().toISOString(), // Format ISO pour être plus lisible 
-      event: event.toUpperCase(), // Pour un log
+      timestamp: new Date().toISOString(),
+      category,
+      event,
       session_id: this.sessionId,
       visitor_id: this.visitorId,
-      details: data // On regroupe les données sous "details" 
+      details
     };
 
-    chrome.storage.local.get(["logs"], res => {
+    chrome.storage.local.get(["logs"], (res) => {
       const logs = res.logs || [];
       logs.push(entry);
-      chrome.storage.local.set({ logs });
+
+      chrome.storage.local.set({ logs }, () => {
+        chrome.runtime.sendMessage({ type: "REFRESH_DASHBOARD" });
+      });
     });
   },
 
-  track(type, event, data = {}) {
-    // On vérifie si le module spécifique est accepté 
-    if (!this.consent[type]) return;
+  /* ---------------------------------------------------------
+     Tracking conditionnel selon préférences
+  --------------------------------------------------------- */
+  track(type, event, details = {}) {
+    if (this.consent !== "accepted") return;
+    if (!this.preferences[type]) return;
 
-    this.log(event, data);
+    this.log(type.toUpperCase(), event, details);
   }
 };

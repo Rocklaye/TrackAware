@@ -1,38 +1,202 @@
-body {
-    font-family: Arial, sans-serif;
-    padding: 20px;
-    background: #fafafa;
+/* ---------------------------------------------------------
+   THEME SOMBRE MODERNE 
+--------------------------------------------------------- */
+
+:root {
+    --bg: #1e1e1e;
+    --bg-light: #252526;
+    --bg-hover: #2d2d2d;
+    --border: #3c3c3c;
+    --text: #d4d4d4;
+    --text-light: #9e9e9e;
+    --accent: #007acc;
+    --danger: #d9534f;
+    --radius: 6px;
+    --transition: 0.15s ease;
 }
 
-h1 {
+body {
+    margin: 0;
+    padding: 0;
+    background: var(--bg);
+    color: var(--text);
+    font-family: "Segoe UI", sans-serif;
+}
+
+/* ---------------------------------------------------------
+   HEADER
+--------------------------------------------------------- */
+
+
+.header {
+    padding: 20px;
+    background: var(--bg-light);
+    border-bottom: 1px solid var(--border);
+}
+
+.header {
     text-align: center;
 }
 
-section {
-    margin-top: 25px;
-    padding: 15px;
-    background: white;
-    border-radius: 8px;
-    box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+
+.header h1 {
+    margin: 0;
+    font-size: 22px;
+    font-weight: 600;
 }
 
-table {
-    width: 100%;
-    border-collapse: collapse;
-    margin-top: 10px;
+.subtitle {
+    margin-top: 4px;
+    color: var(--text-light);
+    font-size: 14px;
 }
 
-th, td {
-    padding: 8px;
-    border-bottom: 1px solid #ddd;
+/* ---------------------------------------------------------
+   CONTROLS
+--------------------------------------------------------- */
+
+.controls {
+    padding: 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    background: var(--bg);
+    border-bottom: 1px solid var(--border);
 }
 
-.filters label {
-    margin-right: 15px;
+.filters {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
 }
 
-button {
-    padding: 8px 12px;
-    margin: 5px;
+.filters {
+    justify-content: center;
+}
+
+
+.filter-btn {
+    background: var(--bg-light);
+    border: 1px solid var(--border);
+    color: var(--text);
+    padding: 6px 12px;
+    border-radius: var(--radius);
     cursor: pointer;
+    transition: var(--transition);
+    font-size: 13px;
+}
+
+.filter-btn:hover {
+    background: var(--bg-hover);
+    border-color: var(--accent);
+}
+
+.filter-btn.active {
+    background: var(--accent);
+    border-color: var(--accent);
+    color: white;
+}
+
+.search-bar {
+    width: 100%;
+    padding: 10px;
+    background: var(--bg-light);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    color: var(--text);
+    font-size: 14px;
+}
+
+.actions {
+    display: flex;
+    gap: 10px;
+}
+
+.action-btn {
+    flex: 1;
+    padding: 10px;
+    background: var(--bg-light);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    color: var(--text);
+    cursor: pointer;
+    transition: var(--transition);
+    font-size: 14px;
+}
+
+.action-btn:hover {
+    background: var(--bg-hover);
+    border-color: var(--accent);
+}
+
+.action-btn.danger:hover {
+    border-color: var(--danger);
+    color: var(--danger);
+}
+
+/* ---------------------------------------------------------
+   LOGS LIST
+--------------------------------------------------------- */
+
+.logs-container {
+    padding: 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.log-entry {
+    background: var(--bg-light);
+    border: 1px solid var(--border);
+    padding: 12px;
+    border-radius: var(--radius);
+    cursor: pointer;
+    transition: var(--transition);
+}
+
+.log-entry:hover {
+    background: var(--bg-hover);
+}
+
+.log-header {
+    display: flex;
+    justify-content: space-between;
+    font-size: 14px;
+}
+
+.log-category {
+    color: var(--accent);
+    font-weight: 600;
+}
+
+.log-timestamp {
+    color: var(--text-light);
+    font-size: 12px;
+}
+
+.log-details {
+    margin-top: 10px;
+    padding-top: 10px;
+    border-top: 1px solid var(--border);
+    font-size: 13px;
+    color: var(--text-light);
+    display: none;
+}
+
+.log-entry.open .log-details {
+    display: block;
+}
+
+.log-details {
+    margin-top: 10px;
+    padding: 12px;
+    border-top: 1px solid var(--border);
+    background: #1a1a1a;
+    border-radius: var(--radius);
+    font-size: 13px;
+    color: var(--text-light);
+    display: none;
+    white-space: pre-wrap;
+    font-family: "JetBrains Mono", "Fira Code", monospace;
+    line-height: 1.4;
 }

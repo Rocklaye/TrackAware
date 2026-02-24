@@ -185,7 +185,7 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   /* ---------------------------------------------------------
-     9) Bouton Confidentialité (chemin mis à jour)
+     9) Bouton Confidentialité
   --------------------------------------------------------- */
   const privacyBtn = document.getElementById("privacyBtn");
   if (privacyBtn) {
@@ -193,4 +193,16 @@ document.addEventListener("DOMContentLoaded", () => {
       chrome.tabs.create({ url: "src/consent/consent.html" });
     });
   }
+
+/* ---------------------------------------------------------
+     10) Bouton Dashboard
+  --------------------------------------------------------- */
+const dashboardBtn = document.getElementById("dashboardBtn");
+if (dashboardBtn) {
+  dashboardBtn.addEventListener("click", () => {
+    chrome.tabs.create({ url: "src/dashboard/dashboard.html" });
+  });
+}
+
+
 });

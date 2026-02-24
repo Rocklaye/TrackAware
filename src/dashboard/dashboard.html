@@ -1,75 +1,48 @@
 <!DOCTYPE html>
 <html lang="fr">
+
 <head>
-    <meta charset="UTF-8">
-    <title>TrackAware — Dashboard</title>
-    <link rel="stylesheet" href="dashboard.css">
+  <meta charset="UTF-8">
+  <title>TrackAware – Dashboard</title>
+  <link rel="stylesheet" href="dashboard.css">
 </head>
 
 <body>
 
-    <h1>📊 Dashboard TrackAware</h1>
+  <header class="header">
+    <h1>Dashboard TrackAware</h1>
+    <p class="subtitle">Analyse locale de vos données collectées</p>
+  </header>
 
-    <button id="backBtn">⬅ Retour</button>
+  <section class="controls">
 
-    <section class="filters">
-        <h2>Filtres</h2>
+    <div class="filters">
+      <button class="filter-btn active" data-filter="all">Tous</button>
+      <button class="filter-btn" data-filter="URL">Domaines</button>
+      <button class="filter-btn" data-filter="TEMPS">Temps</button>
+      <button class="filter-btn" data-filter="ONGLET">Onglets</button>
+      <button class="filter-btn" data-filter="NB_ONGLET">Nb onglets</button>
+      <button class="filter-btn" data-filter="PERIODE">Période</button>
+      <button class="filter-btn" data-filter="AJOUT_SUPP">Notes</button>
+      <button class="filter-btn" data-filter="ACTIVITE">Activité</button>
+    </div>
 
-        <label>Type d’événement :
-            <select id="filterEventType">
-                <option value="">Tous</option>
-            </select>
-        </label>
 
-        <label>Date :
-            <input type="date" id="filterDate">
-        </label>
+    <input id="searchInput" type="text" placeholder="Rechercher dans les logs..." class="search-bar">
 
-        <label>Session :
-            <select id="filterSession">
-                <option value="">Toutes</option>
-            </select>
-        </label>
+    <div class="actions">
+      <button id="exportBtn" class="action-btn">Exporter JSON</button>
+      <button id="clearBtn" class="action-btn danger">Effacer les logs</button>
+    </div>
 
-        <label>Visitor ID :
-            <select id="filterVisitor">
-                <option value="">Tous</option>
-            </select>
-        </label>
+  </section>
 
-        <button id="resetFilters">Réinitialiser</button>
-    </section>
+  <section id="logsContainer" class="logs-container">
+    <!-- Les logs seront injectés ici -->
+  </section>
 
-    <section>
-        <h2>📜 Liste des événements</h2>
-        <table id="logsTable">
-            <thead>
-                <tr>
-                    <th>Heure</th>
-                    <th>Événement</th>
-                    <th>Détails</th>
-                    <th>Session</th>
-                    <th>Visitor</th>
-                </tr>
-            </thead>
-            <tbody></tbody>
-        </table>
-    </section>
+  <script src="dashboard.js"></script>
 
-    <section>
-        <h2>⚖️ Comparaison : Consentement</h2>
-
-        <button id="showAccepted">Consentement accepté</button>
-        <button id="showRefused">Consentement refusé</button>
-
-        <div id="consentComparison"></div>
-    </section>
-
-    <section>
-        <h2>🧠 Ce que l’extension peut déduire</h2>
-        <ul id="insights"></ul>
-    </section>
-
-    <script src="dashboard.js"></script>
 </body>
+
 </html>

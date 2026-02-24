@@ -194,3 +194,33 @@ body {
 .privacy-link:hover {
   color: #333;
 }
+
+/* ---------------------------------------------------------
+   FOOTER CONFIDENTIALITÉ + DASHBOARD (STYLE SOMBRE MODERNE)
+--------------------------------------------------------- */
+
+.footer-privacy {
+  margin-top: 12px;
+  padding-top: 8px;
+  border-top: 1px solid #e0e0e0;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+/* Style partagé pour Confidentialité + Dashboard */
+.privacy-link {
+  background: none;
+  border: none;
+  color: #666;
+  font-size: 12px;
+  cursor: pointer;
+  padding: 4px 0;
+  transition: color 0.2s ease;
+  text-align: center;
+}
+
+.privacy-link:hover {
+  color: #000;
+}

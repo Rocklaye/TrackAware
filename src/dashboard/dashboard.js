@@ -1,118 +1,162 @@
 document.addEventListener("DOMContentLoaded", () => {
+    const logsContainer = document.getElementById("logsContainer");
+    const searchInput = document.getElementById("searchInput");
+    const exportBtn = document.getElementById("exportBtn");
+    const clearBtn = document.getElementById("clearBtn");
+    const filterButtons = document.querySelectorAll(".filter-btn");
+
+    let allLogs = [];
+    let currentFilter = "all";
+    let currentSearch = "";
 
     /* ---------------------------------------------------------
-       Chargement initial des données
+       1) Charger les logs depuis chrome.storage.local
     --------------------------------------------------------- */
-    chrome.storage.local.get(["logs", "preferences", "consent"], (res) => {
-        const logs = res.logs || [];
-        renderLogs(logs);
-        populateFilters(logs);
-        computeInsights(logs);
+    function loadLogs() {
+        chrome.storage.local.get(["logs"], (res) => {
+            allLogs = res.logs || [];
+            renderLogs();
+        });
+    }
+
+    /* ---------------------------------------------------------
+       2) Appliquer filtre + recherche
+    --------------------------------------------------------- */
+    function getFilteredLogs() {
+        return allLogs.filter((log) => {
+            // Filtre par catégorie
+            if (currentFilter !== "all" && log.category !== currentFilter) {
+                return false;
+            }
+
+            // Recherche texte
+            if (currentSearch.trim() !== "") {
+                const q = currentSearch.toLowerCase();
+                const haystack = JSON.stringify(log).toLowerCase();
+                if (!haystack.includes(q)) return false;
+            }
+
+            return true;
+        });
+    }
+
+    /* ---------------------------------------------------------
+       3) Affichage des logs
+    --------------------------------------------------------- */
+    function renderLogs() {
+        logsContainer.innerHTML = "";
+
+        const logsToShow = getFilteredLogs();
+
+        if (logsToShow.length === 0) {
+            const empty = document.createElement("div");
+            empty.className = "empty-state";
+            empty.textContent = "Aucun log à afficher pour le moment.";
+            logsContainer.appendChild(empty);
+            return;
+        }
+
+        logsToShow.forEach((log) => {
+            const entry = document.createElement("div");
+            entry.className = "log-entry";
+
+            /* ---------- HEADER ---------- */
+            const header = document.createElement("div");
+            header.className = "log-header";
+
+            const left = document.createElement("div");
+
+            // Catégorie (bleu)
+            const catSpan = document.createElement("span");
+            catSpan.className = "log-category";
+            catSpan.textContent = (log.category || "").toUpperCase();
+
+            // Event (gris clair)
+            const eventSpan = document.createElement("span");
+            eventSpan.className = "log-event";
+            eventSpan.textContent = " - " + (log.event || "").toUpperCase();
+
+            left.appendChild(catSpan);
+            left.appendChild(eventSpan);
+
+            // Timestamp
+            const right = document.createElement("div");
+            right.className = "log-timestamp";
+            right.textContent = log.timestamp || "";
+
+            header.appendChild(left);
+            header.appendChild(right);
+
+            /* ---------- DETAILS JSON ---------- */
+            const details = document.createElement("div");
+            details.className = "log-details";
+
+            const pretty = JSON.stringify(log, null, 2);
+            details.textContent = pretty;
+
+            entry.appendChild(header);
+            entry.appendChild(details);
+
+            entry.addEventListener("click", () => {
+                entry.classList.toggle("open");
+            });
+
+            logsContainer.appendChild(entry);
+        });
+    }
+
+    /* ---------------------------------------------------------
+       4) Gestion des filtres
+    --------------------------------------------------------- */
+    filterButtons.forEach((btn) => {
+        btn.addEventListener("click", () => {
+            filterButtons.forEach(b => b.classList.remove("active"));
+            btn.classList.add("active");
+
+            currentFilter = btn.dataset.filter || "all";
+            renderLogs();
+        });
     });
 
     /* ---------------------------------------------------------
-       Mise à jour en temps réel (background → dashboard)
+       5) Recherche
     --------------------------------------------------------- */
-    chrome.runtime.onMessage.addListener((msg) => {
-        if (msg.type === "REFRESH_DASHBOARD") {
-            location.reload();
-        }
+    searchInput.addEventListener("input", () => {
+        currentSearch = searchInput.value;
+        renderLogs();
     });
 
     /* ---------------------------------------------------------
-       Rendu du tableau des logs
+       6) Export JSON
     --------------------------------------------------------- */
-    function renderLogs(logs) {
-        const tbody = document.querySelector("#logsTable tbody");
-        tbody.innerHTML = "";
-
-        logs.forEach(log => {
-            const tr = document.createElement("tr");
-
-            tr.innerHTML = `
-                <td>${new Date(log.time).toLocaleString()}</td>
-                <td>${log.event}</td>
-                <td>${JSON.stringify(log.details)}</td>
-                <td>${log.session_id}</td>
-                <td>${log.visitor_id}</td>
-            `;
-
-            tbody.appendChild(tr);
+    exportBtn.addEventListener("click", () => {
+        const logsToExport = getFilteredLogs();
+        const blob = new Blob([JSON.stringify(logsToExport, null, 2)], {
+            type: "application/json"
         });
-    }
+
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement("a");
+        a.href = url;
+        a.download = "trackaware_logs.json";
+        a.click();
+        URL.revokeObjectURL(url);
+    });
 
     /* ---------------------------------------------------------
-       Filtres dynamiques
+       7) Effacer les logs
     --------------------------------------------------------- */
-    function populateFilters(logs) {
-        const eventTypes = [...new Set(logs.map(l => l.event))];
-        const sessions = [...new Set(logs.map(l => l.session_id))];
-        const visitors = [...new Set(logs.map(l => l.visitor_id))];
+    clearBtn.addEventListener("click", () => {
+        if (!confirm("Voulez-vous vraiment effacer tous les logs ?")) return;
 
-        fillSelect("filterEventType", eventTypes);
-        fillSelect("filterSession", sessions);
-        fillSelect("filterVisitor", visitors);
-    }
-
-    function fillSelect(id, values) {
-        const select = document.getElementById(id);
-        values.forEach(v => {
-            const opt = document.createElement("option");
-            opt.value = v;
-            opt.textContent = v;
-            select.appendChild(opt);
+        chrome.storage.local.set({ logs: [] }, () => {
+            allLogs = [];
+            renderLogs();
         });
-    }
+    });
 
     /* ---------------------------------------------------------
-       Insights intelligents
+       8) Init
     --------------------------------------------------------- */
-    function computeInsights(logs) {
-        const insights = [];
-
-        // 1) Heures d’activité
-        const hours = logs.map(l => new Date(l.time).getHours());
-        const night = hours.filter(h => h >= 21 || h < 6).length;
-        const nightPct = Math.round((night / hours.length) * 100);
-
-        insights.push(`🌙 Activité nocturne : ${nightPct}% des événements après 21h`);
-
-        // 2) Domaine le plus visité
-        const domains = logs
-            .filter(l => l.event === "DOMAIN_VISIT")
-            .map(l => l.details.domain);
-
-        if (domains.length > 0) {
-            const freq = {};
-            domains.forEach(d => freq[d] = (freq[d] || 0) + 1);
-
-            const top = Object.entries(freq).sort((a,b) => b[1] - a[1])[0];
-            insights.push(`🌐 Domaine le plus visité : ${top[0]} (${top[1]} visites)`);
-        }
-
-        // 3) Temps passé
-        const times = logs.filter(l => l.event === "TIME_SPENT");
-        if (times.length > 0) {
-            const total = times.reduce((sum, l) => sum + l.details.duration_ms, 0);
-            const minutes = Math.round(total / 60000);
-            insights.push(`⏱ Temps total passé sur les sites : ${minutes} minutes`);
-        }
-
-        // 4) Inactivité
-        const idle = logs.filter(l => l.event === "USER_IDLE").length;
-        const idlePct = Math.round((idle / logs.length) * 100);
-        insights.push(`😴 Inactivité détectée : ${idlePct}% des événements`);
-
-        // 5) Score de confiance
-        const score = Math.min(100, Math.round((logs.length / 50) * 100));
-        insights.push(`📈 Score de confiance : ${score}%`);
-
-        // Affichage
-        const ul = document.getElementById("insights");
-        insights.forEach(i => {
-            const li = document.createElement("li");
-            li.textContent = i;
-            ul.appendChild(li);
-        });
-    }
+    loadLogs();
 });

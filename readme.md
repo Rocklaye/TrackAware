@@ -252,7 +252,7 @@ Résultat :
 
 ---
 
-# 🛠 8. Installation
+#  8. Installation
 
 1. Télécharger le projet  
 2. Aller sur `chrome://extensions`  

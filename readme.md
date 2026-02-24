@@ -88,7 +88,7 @@ TrackAware demarre et apparaît dans la barre d’extension
 
 
 ## 4. Structure de l’extension
-![1](https://github.com/Rocklaye/TrackAware/images/TrackAware.png)
+![Images](https://raw.githubusercontent.com/Rocklaye/TrackAware/main/images/TrackAware.png)
 TrackAware est composée de trois vues principales :
 
 ### 4.1. Vue Popup - Prise de notes
@@ -118,15 +118,18 @@ timestamp	Horodatage des événements
 
 Aucun tracking n’est actif tant que l’utilisateur n’a pas donné son consentement.
 
+### Préférences de confidentialité
 
-Préférence	Ce qui est collecté	Exemple d’événement
-URL	Domaine, protocole, chemin	DOMAIN_VISIT
-Onglet	Changement d’onglet	TAB_SWITCH
-Nb Onglets	Nombre total d’onglets	TAB_COUNT
-Activité	Idle / Active / Locked	USER_BECAME_IDLE
-Période	Ouverture/fermeture extension	EXTENSION_OPEN
-Notes	Ajout/suppression note	NOTE_ADD / NOTE_DELETE
-Temps (désactivé)	Durée passée par domaine	TIME_SPENT
+| Préférence     | Ce qui est collecté                      | Exemple d’événement     |
+|----------------|------------------------------------------|-------------------------|
+| URL            | Domaine, protocole, chemin               | `DOMAIN_VISIT`          |
+| Onglet         | Changement d’onglet                      | `TAB_SWITCH`            |
+| Nb Onglets     | Nombre total d’onglets                   | `TAB_COUNT`             |
+| Activité       | Idle / Active / Locked                   | `USER_BECAME_IDLE`      |
+| Période        | Ouverture / fermeture extension          | `EXTENSION_OPEN`        |
+| Notes          | Ajout / suppression de note              | `NOTE_ADD`              |
+| Temps (off)    | Durée passée par domaine                 | `TIME_SPENT` (désactivé)|
+
 
 Chaque case cochée active un module dans le service worker.
 

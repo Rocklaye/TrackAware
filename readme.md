@@ -58,7 +58,6 @@ Le projet répond aux exigences suivantes :
 ✔ Journalisation claire des événements  
 ✔ Preuves visibles de collecte  
 ✔ Données locales uniquement  
-✔ Code original  
 
 ---
 
@@ -77,7 +76,7 @@ Firefox et Safari ne sont pas compatibles (Manifest V3 non supporté).
 ### 3.2. Installation en mode développeur
 Télécharger ou cloner le dépôt GitHub :
 
-`git clone https://github.com/ton-repo/TrackAware.git`
+`git clone https://github.com/Rocklaye/TrackAware.git`
 
 - Ouvrir Chrome
 - Aller à : chrome://extensions
@@ -89,6 +88,7 @@ TrackAware demarre et apparaît dans la barre d’extension
 
 
 ## 4. Structure de l’extension
+![1](https://github.com/Rocklaye/TrackAware/images/TrackAware.png)
 TrackAware est composée de trois vues principales :
 
 ### 4.1. Vue Popup - Prise de notes
@@ -264,9 +264,4 @@ TrackAware démontre que :
 - peu de données suffisent pour profiler,
 - le stockage local peut devenir un mécanisme persistant,
 - le consentement modifie la logique de collecte.
-
-<<<<<<< HEAD
-Comprendre ces mécanismes est essentiel pour analyser et encadrer les systèmes de tracking modernes.
-=======
 Comprendre ces mécanismes est essentiel pour mieux protéger la vie privée.
->>>>>>> 69fd42b (fix readme)

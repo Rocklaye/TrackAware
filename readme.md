@@ -1,6 +1,6 @@
-# 📘 TrackAware — Extension Chrome de transparence et de suivi local
+#  TrackAware - Extension Chrome de transparence et de suivi local
 
-## 📝 Présentation générale
+##  Présentation générale
 
 TrackAware est une extension Chrome pédagogique conçue pour rendre visibles des mécanismes de collecte de données habituellement invisibles pour l’utilisateur.
 
@@ -24,7 +24,7 @@ Aucune information n’est envoyée vers un serveur externe.
 
 ---
 
-# 🎯 1. Objectif du projet
+#  1. Objectif du projet
 
 Le web moderne déclenche des mécanismes de suivi à partir d’actions simples :
 
@@ -74,7 +74,7 @@ Les logs sont lisibles et organisés (pas de JSON brut illisible).
 
 ---
 
-# 🧩 2. Mécanisme étudié
+#  2. Mécanisme étudié
 
 TrackAware simule un système de consentement et un mécanisme de suivi local inspiré des trackers réels.
 
@@ -89,7 +89,7 @@ Ce fonctionnement reproduit les principes fondamentaux du tracking comportementa
 
 ---
 
-# 📦 3. Fonctionnement général
+#  3. Fonctionnement général
 
 ## 🔹 Consentement
 
@@ -134,7 +134,7 @@ Types d’événements :
 
 ---
 
-# 🗂 4. Données collectées
+#  4. Données collectées
 
 ## Données enregistrées
 
@@ -165,7 +165,7 @@ Toutes les données sont :
 
 ---
 
-# 🧠 5. Implications et risques
+#  5. Implications et risques
 
 TrackAware démontre qu’il n’est pas nécessaire de collecter des données sensibles pour profiler un utilisateur.
 
@@ -187,7 +187,7 @@ C’est le principe fondamental des systèmes de tracking modernes.
 
 ---
 
-# ⚠️ 6. Limites de la démonstration
+#  6. Limites de la démonstration
 
 Cette démonstration simplifie volontairement :
 
@@ -203,7 +203,7 @@ L’objectif est pédagogique et analytique.
 
 ---
 
-# 🧪 7. Scénarios reproductibles
+#  7. Scénarios reproductibles
 
 ## 🔸 Scénario 1 — Consentement
 
@@ -262,9 +262,9 @@ Résultat :
 
 ---
 
-# 📊 9. Dashboard
+#  9. Dashboard 
 
-Le dashboard affiche :
+Le dashboard permet la visualisation des logs, il affiche :
 
 - les logs bruts
 - les événements filtrés
@@ -281,7 +281,7 @@ Les logs sont :
 
 ---
 
-# 🔐 Conclusion
+#  Conclusion
 
 TrackAware démontre que :
 

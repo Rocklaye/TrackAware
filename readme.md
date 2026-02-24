@@ -1,16 +1,25 @@
 #  TrackAware - Extension Chrome de transparence et de suivi local
 
-##  Présentation générale
+## 1. Présentation générale
 
-TrackAware est une extension Chrome pédagogique conçue pour rendre visibles des mécanismes de collecte de données habituellement invisibles pour l’utilisateur.
+TrackAware est une extension Chrome de prise de notes, conçue pour révéler les mécanismes invisibles de collecte de données utilisés dans de nombreux sites web et applications.
 
-Elle fonctionne comme une simple extension de prise de notes.  
+Elle fonctionne en apparence comme une simple extension de prise de notes.  
 Cependant, en arrière-plan, elle simule le comportement d’un système de tracking similaire à ceux utilisés dans :
 
 - les bannières de cookies,
 - les outils analytiques,
 - les pixels de suivi,
 - les SDK mobiles.
+
+Elle offre :
+
+- une interface simple pour ajouter, modifier et supprimer des notes,
+- une bannière de consentement permettant de choisir quelles données peuvent être collectées,
+- un dashboard complet pour visualiser les événements enregistrés, les filtrer, les exporter et les analyser.
+
+🎯 Objectif pédagogique :  
+Montrer concrètement ce qui se passe lorsqu’un utilisateur interagit avec une interface numérique, et comment des données apparemment anodines peuvent être collectées, corrélées et persistées.
 
 L’objectif n’est pas de surveiller l’utilisateur, mais de démontrer concrètement :
 
@@ -19,12 +28,11 @@ L’objectif n’est pas de surveiller l’utilisateur, mais de démontrer concr
 - comment elles sont structurées,
 - et ce qu’elles permettent d’inférer.
 
-Toutes les données sont stockées localement.  
-Aucune information n’est envoyée vers un serveur externe.
-
+🔒 Aucune donnée n’est envoyée vers un serveur externe.  
+Tout est stocké localement dans votre navigateur.
 ---
 
-#  1. Objectif du projet
+## 2. Objectif du projet
 
 Le web moderne déclenche des mécanismes de suivi à partir d’actions simples :
 
@@ -41,6 +49,9 @@ TrackAware expose ces événements en les rendant :
 - catégorisés,
 - comparables.
 
+L’extension permet de répondre à la question centrale du projet :
+ `« Qu’est‑ce qui se passe exactement quand une action a lieu ? »`
+
 Le projet répond aux exigences suivantes :
 
 ✔ Interface fonctionnelle  
@@ -51,109 +62,141 @@ Le projet répond aux exigences suivantes :
 
 ---
 
-# 4.1 Démonstration fonctionnelle
+## 3. Installation (détaillée)
+### 3.1. Prérequis
 
-L’application permet d’observer :
+Un navigateur basé sur Chromium :
+✔ Chrome
+✔ Edge
+✔ Brave
+✔ Opera
+✔ Vivaldi
 
-- une interface utilisateur (popup + dashboard),
-- des logs structurés et horodatés,
-- des identifiants générés,
-- l’état du consentement,
-- des événements de navigation,
-- des événements d’activité,
-- des événements liés à l’extension.
+Firefox et Safari ne sont pas compatibles (Manifest V3 non supporté).
 
-Chaque événement contient :
+### 3.2. Installation en mode développeur
+Télécharger ou cloner le dépôt GitHub :
 
-- un type normalisé (ex : DOMAIN_VISIT, TAB_SWITCH),
-- un timestamp clair,
-- des métadonnées associées,
-- un stockage local persistant.
+`git clone https://github.com/ton-repo/TrackAware.git`
 
-Les logs sont lisibles et organisés (pas de JSON brut illisible).
+- Ouvrir Chrome
+- Aller à : chrome://extensions
+- Activer Mode développeur (coin supérieur droit)
+- Cliquer sur Charger l’extension non empaquetée
+- Sélectionner le dossier du projet
 
----
+TrackAware demarre et apparaît dans la barre d’extension 
 
-#  2. Mécanisme étudié
 
-TrackAware simule un système de consentement et un mécanisme de suivi local inspiré des trackers réels.
+## 4. Structure de l’extension
+TrackAware est composée de trois vues principales :
 
-Le modèle repose sur :
+### 4.1. Vue Popup - Prise de notes
+Accessible en cliquant sur l’icône de l’extension.
 
-1. Génération d’identifiants persistants
-2. Journalisation des interactions
-3. Corrélation temporelle
-4. Stockage local durable
+Fonctionnalités :
+- Ajouter une note
+- Modifier une note
+- Supprimer une note
+- Stockage local automatique
 
-Ce fonctionnement reproduit les principes fondamentaux du tracking comportemental.
+Cette vue simule une application “normale” que l’utilisateur pourrait utiliser au quotidien.
 
----
+### 4.2. Vue Consentement — Préférences de confidentialité
+Lors de la première installation, l’utilisateur doit choisir :
 
-#  3. Fonctionnement général
+- Accepter
+- Refuser
+- Personnaliser les préférences
 
-## 🔹 Consentement
+Par défaut : Refusé
+L’extension ne collecte que le strict minimum pour fonctionner :
+Donnée	Description
+visitor_id	Identifiant unique généré une fois
+session_id	Identifiant de session
+timestamp	Horodatage des événements
 
-- Acceptation / refus
-- Activation / désactivation des préférences
-- Génération de visitor_id
-- Création de session_id
+Aucun tracking n’est actif tant que l’utilisateur n’a pas donné son consentement.
 
-Différence observable entre scénario accepté et refusé.
 
----
+Préférence	Ce qui est collecté	Exemple d’événement
+URL	Domaine, protocole, chemin	DOMAIN_VISIT
+Onglet	Changement d’onglet	TAB_SWITCH
+Nb Onglets	Nombre total d’onglets	TAB_COUNT
+Activité	Idle / Active / Locked	USER_BECAME_IDLE
+Période	Ouverture/fermeture extension	EXTENSION_OPEN
+Notes	Ajout/suppression note	NOTE_ADD / NOTE_DELETE
+Temps (désactivé)	Durée passée par domaine	TIME_SPENT
 
-## 🔹 Navigation
+Chaque case cochée active un module dans le service worker.
 
-- Domaine visité
-- Protocole
-- Chemin
-- Changement d’onglet
-- Nombre total d’onglets ouverts
+### 4.3. Vue Dashboard — Visualisation des données
+Le dashboard contient deux onglets principaux :
 
-Types d’événements :
-- DOMAIN_VISIT
-- TAB_SWITCH
-- TAB_COUNT
+#### 🔹 1. Logs détaillés
+- Liste complète des événements
+- Filtrage par catégorie
+- Recherche
+- Affichage des détails (device info, horodatage, identifiants)
+- Effacement des logs
+- Exportation en JSON
 
----
+#### 🔹 2. Diagrammes
+Visualisations générées avec Chart.js :
 
-## 🔹 Activité utilisateur
+- Histogrammes
+- Graphiques circulaires
+- Graphiques temporels
+- Répartition des événements
 
-- USER_BECAME_IDLE
-- USER_RETURNED_ACTIVE
-- Détection d’inactivité
+Les graphiques s’adaptent aux préférences activées.
 
----
+## 5. Données collectées (tableau complet)
 
-## 🔹 Extension
 
-- EXTENSION_OPEN
-- EXTENSION_CLOSE
-- NOTE_ADD
-- NOTE_DELETE
-
----
-
-#  4. Données collectées
-
-## Données enregistrées
-
-| Catégorie | Exemple |
-|------------|----------|
-| Identifiants | visitor_id, session_id |
-| Navigation | domaine, protocole, chemin |
-| Onglets | tab_id, window_id, nombre |
-| Activité | état, durée |
-| Extension | ouverture, fermeture |
-| Notes | ajout, suppression |
+Catégorie	Exemple	Description
+Identifiants	visitor_id, session_id	Permettent de distinguer sessions et visiteurs
+Navigation (URL)	domaine, protocole, chemin	Détecte les pages visitées
+Onglets	tab_id, window_id	Identifie les changements d’onglet
+Nb Onglets	nombre total	Permet de suivre l’activité multi‑onglets
+Activité	active / idle / locked	Détecte l’inactivité ou le retour
+Période (Extension)	ouverture, fermeture	Mesure l’usage de l’extension
+Notes	ajout, suppression	Actions dans la popup
+Temps (désactivé)	durée par domaine	Temps passé sur un site
 
 Toutes les données sont :
 
 - locales,
-- non sensibles,
 - consultables via le dashboard.
 
----
+## 6. Implications et risques
+Même sans données sensibles, il est possible de :
+
+- Reconstituer des habitudes horaires
+- Identifier des domaines récurrents
+- Mesurer la fréquence d’utilisation
+- Corréler navigation et activité
+- Déduire des comportements récurrents
+
+Cela démontre que le profilage repose principalement sur la corrélation temporelle.
+
+TrackAware montre comment :
+
+- un identifiant persistant,
+- des logs d’activité,
+- des événements de navigation,
+
+peuvent suffire à déduire des comportements réels.
+
+## 7. Limites de la démonstration
+- Limite au navigateur de type chromium
+- Pas de serveur distant
+- Pas de cookies tiers
+- Pas de fingerprinting
+- Pas de corrélation multi‑appareils
+- Pas d’analyse statistique avancée
+
+L’objectif est pédagogique, pas industriel.
 
 ## Données non collectées
 
@@ -165,47 +208,9 @@ Toutes les données sont :
 
 ---
 
-#  5. Implications et risques
+#  8. Scénarios reproductibles
 
-TrackAware démontre qu’il n’est pas nécessaire de collecter des données sensibles pour profiler un utilisateur.
-
-À partir des logs, il est possible de :
-
-- identifier des habitudes horaires,
-- détecter des sites récurrents,
-- mesurer une fréquence d’utilisation,
-- reconstruire des séquences de navigation,
-- établir un profil comportemental.
-
-Même sans données personnelles explicites, la corrélation temporelle permet :
-
-- surveillance passive,
-- analyse comportementale,
-- inférence d’habitudes.
-
-C’est le principe fondamental des systèmes de tracking modernes.
-
----
-
-#  6. Limites de la démonstration
-
-Cette démonstration simplifie volontairement :
-
-- Aucun serveur distant
-- Pas de cookies tiers
-- Pas de tracking inter-sites réel
-- Pas de fingerprinting
-- Pas de corrélation multi-appareils
-- Pas d’analyse statistique avancée
-- Module de durée par domaine désactivé
-
-L’objectif est pédagogique et analytique.
-
----
-
-#  7. Scénarios reproductibles
-
-## 🔸 Scénario 1 — Consentement
+## 🔸 Scénario 1 - Consentement
 
 1. Installer l’extension  
 2. Cliquer sur « Refuser »  
@@ -217,77 +222,55 @@ Résultat : différence claire et observable.
 
 ---
 
-## 🔸 Scénario 2 — Navigation
+## 🔸 Scénario 2 - Navigation
 
-1. Ouvrir plusieurs sites  
-2. Changer d’onglets  
-3. Ouvrir le dashboard  
+1. Cocher `Domaines visités` dans les preferences de confidentialite
+2. Ouvrir plusieurs sites  
+3. Changer d’onglets  
+4. Ouvrir le dashboard  
+5. Observer les logs `DOMAIN_VISIT` , `TAB_SWITCH` , `TAB_COUNT`  dans le dashboard
 
-Observer :
-- DOMAIN_VISIT
-- TAB_SWITCH
-- TAB_COUNT
+## 🔸 Scénario 3 - Extension
 
----
-
-## 🔸 Scénario 3 — Activité
-
-1. Rester inactif 1 minute  
-2. Revenir  
-3. Observer les événements  
-
-Résultat :
-- USER_BECAME_IDLE
-- USER_RETURNED_ACTIVE
-
----
-
-## 🔸 Scénario 4 — Extension
-
-1. Ouvrir l’extension  
-2. Ajouter une note  
+1. Cocher `Ouverture / fermeture de l’extension` et `Ajout / suppression de notes` dans les preferences de confidentialite
+2. Ouvrir l’extension  
+3. Ajouter une note  
 3. Supprimer une note  
 4. Fermer l’extension  
-5. Observer les logs  
+5. Observer les logs dans le dashboard  `PERIODE - EXTENSION_OPEN` , `AJOUT_SUPP - NOTE_ADD` , `AJOUT_SUPP - NOTE_DELETE`
 
 ---
 
+<<<<<<< HEAD
 #  8. Installation
+=======
+## 🔸 Scénario 4 - Activité
+>>>>>>> 69fd42b (fix readme)
 
-1. Télécharger le projet  
-2. Aller sur `chrome://extensions`  
-3. Activer le mode développeur  
-4. Charger l’extension non empaquetée  
-5. Sélectionner le dossier  
+1. Cocher `Activité / inactivité utilisateur` et `Domaines visités` dans les preferences de confidentialite
+2. Ouvrir l’extension  
+3. Ouvrir un site  
+4. Rester inactif 1 minute dans le meme site 
+5. Revenir  
+6. Observer les événements  
 
----
-
-#  9. Dashboard 
-
-Le dashboard permet la visualisation des logs, il affiche :
-
-- les logs bruts
-- les événements filtrés
-- les identifiants actifs
-- l’état du consentement
-- les données persistantes
-
-Les logs sont :
-
-- normalisés
-- lisibles
-- horodatés
-- comparables
+Résultat :
+- `DOMAIN_VISIT`
+- `USER_BECAME_IDLE`
+- `USER_RETURNED_ACTIVE`
 
 ---
-
-#  Conclusion
+# 11. Conclusion
 
 TrackAware démontre que :
 
 - le suivi utilisateur est techniquement simple,
-- des données non sensibles suffisent à profiler,
-- la corrélation temporelle est puissante,
-- le consentement modifie le comportement de collecte.
+- peu de données suffisent pour profiler,
+- le stockage local peut devenir un mécanisme persistant,
+- le consentement modifie la logique de collecte.
 
+<<<<<<< HEAD
 Comprendre ces mécanismes est essentiel pour analyser et encadrer les systèmes de tracking modernes.
+=======
+Comprendre ces mécanismes est essentiel pour mieux protéger la vie privée.
+>>>>>>> 69fd42b (fix readme)

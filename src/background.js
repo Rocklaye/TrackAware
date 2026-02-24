@@ -17,7 +17,7 @@ function getDeviceInfo() {
 --------------------------------------------------------- */
 chrome.runtime.onInstalled.addListener((details) => {
   if (details.reason === "install") {
-    chrome.tabs.create({ url: "consent.html" });
+    chrome.tabs.create({ url: "src/consent/consent.html" });
   }
 });
 
@@ -55,7 +55,7 @@ chrome.runtime.onMessage.addListener((msg) => {
   if (msg.type === "CONSENT_UPDATE") {
     Tracker.updateConsent(msg.value, msg.preferences);
 
-    chrome.tabs.query({ url: chrome.runtime.getURL("consent.html") }, (tabs) => {
+    chrome.tabs.query({ url: chrome.runtime.getURL("src/consent/consent.html") }, (tabs) => {
       tabs.forEach(t => chrome.tabs.remove(t.id));
     });
 

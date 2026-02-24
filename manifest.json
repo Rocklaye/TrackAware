@@ -2,32 +2,42 @@
     "manifest_version": 3,
     "name": "TrackAware",
     "version": "3.0",
-    "description": "Extension de prise de notes simple et rapide.",
+    "description": "Extension de suivi local et de transparence des données personnelles.",
     "icons": {
         "16": "icons/icon16.jpeg",
         "32": "icons/icon32.jpeg",
         "48": "icons/icon48.jpeg",
         "128": "icons/icon128.jpeg"
     },
+    "background": {
+        "service_worker": "src/background.js",
+        "type": "module"
+    },
     "action": {
-        "default_icon": {
-            "16": "icons/icon16.jpeg",
-            "32": "icons/icon32.jpeg"
-        },
-        "default_popup": "popup.html",
-        "default_title": "TrackAware"
+        "default_popup": "src/popup/popup.html"
     },
     "permissions": [
         "storage",
         "tabs",
-        "history",
         "idle"
     ],
     "host_permissions": [
         "<all_urls>"
     ],
-    "background": {
-        "service_worker": "background.js",
-        "type": "module"
-    }
+    "web_accessible_resources": [
+        {
+            "resources": [
+                "src/dashboard/dashboard.html",
+                "src/dashboard/dashboard.js",
+                "src/dashboard/dashboard.css",
+                "src/consent/consent.html",
+                "src/consent/consent.js",
+                "src/consent/consent.css",
+                "style/style.css"
+            ],
+            "matches": [
+                "<all_urls>"
+            ]
+        }
+    ]
 }

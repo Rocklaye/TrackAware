@@ -65,6 +65,7 @@ document.addEventListener("DOMContentLoaded", () => {
     chrome.storage.local.get(["notes"], (result) => {
       let notes = result.notes || [];
       let noteId = editingNoteId;
+      let createdAt = new Date().toISOString();
 
       if (editingNoteId) {
         notes = notes.map(n =>
@@ -76,7 +77,7 @@ document.addEventListener("DOMContentLoaded", () => {
           id: noteId,
           title,
           content,
-          createdAt: new Date().toISOString()
+          createdAt
         });
       }
 
@@ -85,6 +86,7 @@ document.addEventListener("DOMContentLoaded", () => {
           type: "NOTE_ADD",
           note_id: noteId,
           length: content.length,
+          created_at: createdAt,
           from: "popup"
         });
 
@@ -183,12 +185,12 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   /* ---------------------------------------------------------
-     9) Bouton Confidentialité 
+     9) Bouton Confidentialité (chemin mis à jour)
   --------------------------------------------------------- */
   const privacyBtn = document.getElementById("privacyBtn");
   if (privacyBtn) {
     privacyBtn.addEventListener("click", () => {
-      chrome.tabs.create({ url: "consent.html" });
+      chrome.tabs.create({ url: "src/consent/consent.html" });
     });
   }
 });

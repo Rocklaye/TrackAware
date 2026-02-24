@@ -154,18 +154,18 @@ Visualisations générées avec Chart.js :
 
 Les graphiques s’adaptent aux préférences activées.
 
-## 5. Données collectées (tableau complet)
+## 5. Données collectées
 
 
-Catégorie	Exemple	Description
-Identifiants	visitor_id, session_id	Permettent de distinguer sessions et visiteurs
-Navigation (URL)	domaine, protocole, chemin	Détecte les pages visitées
-Onglets	tab_id, window_id	Identifie les changements d’onglet
-Nb Onglets	nombre total	Permet de suivre l’activité multi‑onglets
-Activité	active / idle / locked	Détecte l’inactivité ou le retour
-Période (Extension)	ouverture, fermeture	Mesure l’usage de l’extension
-Notes	ajout, suppression	Actions dans la popup
-Temps (désactivé)	durée par domaine	Temps passé sur un site
+| Catégorie      | Exemple                           | Description                                      |
+|----------------|-----------------------------------|--------------------------------------------------|
+| Identifiants   | `visitor_id`, `session_id`        | Identifiants persistants générés localement      |
+| Navigation     | `domaine`, `protocole`, `chemin`  | Détection des pages visitées                     |
+| Onglets        | `tab_id`, `window_id`, `nombre`   | Suivi des changements d’onglets                  |
+| Activité       | `active` / `idle` / `locked`      | Détection de l’inactivité                        |
+| Période        | `ouverture`, `fermeture extension`| Usage de l’extension                             |
+| Notes          | `ajout`, `suppression`            | Actions dans la popup                            |
+| Temps (off)    | `durée par domaine `              | Module désactivé dans cette version              |
 
 Toutes les données sont :
 

@@ -241,11 +241,7 @@ Résultat : différence claire et observable.
 
 ---
 
-<<<<<<< HEAD
-#  8. Installation
-=======
 ## 🔸 Scénario 4 - Activité
->>>>>>> 69fd42b (fix readme)
 
 1. Cocher `Activité / inactivité utilisateur` et `Domaines visités` dans les preferences de confidentialite
 2. Ouvrir l’extension  

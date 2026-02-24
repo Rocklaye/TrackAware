@@ -1,3 +1,15 @@
+export function safeSendMessage(msg) {
+  try {
+    chrome.runtime.sendMessage(msg, (resp) => {
+      if (chrome.runtime.lastError) {
+        // ignore error to prevent SW crash
+      }
+    });
+  } catch (e) {
+    // ignore
+  }
+}
+
 export const Tracker = {
   consent: "refused",
   preferences: {},
@@ -5,9 +17,6 @@ export const Tracker = {
   visitorId: null,
   eventIndex: 0,
 
-  /* ---------------------------------------------------------
-     Initialisation du tracker
-  --------------------------------------------------------- */
   init(consent, preferences = {}) {
     this.consent = consent;
     this.preferences = preferences;
@@ -25,9 +34,6 @@ export const Tracker = {
     });
   },
 
-  /* ---------------------------------------------------------
-     Mise à jour du consentement
-  --------------------------------------------------------- */
   updateConsent(consent, preferences = {}) {
     this.consent = consent;
     this.preferences = preferences;
@@ -37,9 +43,6 @@ export const Tracker = {
     this.preferences = preferences;
   },
 
-  /* ---------------------------------------------------------
-     Log normalisé (format SIEM)
-  --------------------------------------------------------- */
   log(category, event, details = {}) {
     const entry = {
       event_id: crypto.randomUUID(),
@@ -58,14 +61,11 @@ export const Tracker = {
       logs.push(entry);
 
       chrome.storage.local.set({ logs }, () => {
-        chrome.runtime.sendMessage({ type: "REFRESH_DASHBOARD" });
+        safeSendMessage({ type: "REFRESH_DASHBOARD" });
       });
     });
   },
 
-  /* ---------------------------------------------------------
-     Tracking conditionnel selon préférences
-  --------------------------------------------------------- */
   track(type, event, details = {}) {
     if (this.consent !== "accepted") return;
     if (!this.preferences[type]) return;

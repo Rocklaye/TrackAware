@@ -14,8 +14,18 @@
     <p class="subtitle">Analyse locale de vos données collectées</p>
   </header>
 
+  <!-- Boutons de navigation -->
+  <div class="view-switch">
+    <button class="filter-btn active" id="btnLogs">Logs</button>
+    <button class="filter-btn" id="btnCharts">Graphiques</button>
+  </div>
+
+  <!-- Compteurs par catégorie -->
+  <div id="statsBar" class="stats-bar"></div>
+
   <section class="controls">
 
+    <!-- Filtres par catégorie -->
     <div class="filters">
       <button class="filter-btn active" data-filter="all">Tous</button>
       <button class="filter-btn" data-filter="URL">Domaines</button>
@@ -27,9 +37,30 @@
       <button class="filter-btn" data-filter="ACTIVITE">Activité</button>
     </div>
 
-
+    <!-- Recherche -->
     <input id="searchInput" type="text" placeholder="Rechercher dans les logs..." class="search-bar">
 
+    <!-- Filtres avancés -->
+    <div class="extra-filters">
+      <select id="timeFilter" class="time-filter">
+        <option value="all">Toutes les périodes</option>
+        <option value="1h">Dernière heure</option>
+        <option value="24h">Dernières 24h</option>
+        <option value="today">Aujourd’hui</option>
+        <option value="week">Cette semaine</option>
+        <option value="month">Ce mois</option>
+      </select>
+
+      <select id="limitFilter" class="time-filter">
+        <option value="all">Tous les logs</option>
+        <option value="10">10 derniers</option>
+        <option value="30">30 derniers</option>
+        <option value="50">50 derniers</option>
+        <option value="100">100 derniers</option>
+      </select>
+    </div>
+
+    <!-- Actions -->
     <div class="actions">
       <button id="exportBtn" class="action-btn">Exporter JSON</button>
       <button id="clearBtn" class="action-btn danger">Effacer les logs</button>
@@ -37,12 +68,9 @@
 
   </section>
 
-  <section id="logsContainer" class="logs-container">
-    <!-- Les logs seront injectés ici -->
-  </section>
+  <section id="logsContainer" class="logs-container"></section>
 
   <script src="dashboard.js"></script>
 
 </body>
-
 </html>

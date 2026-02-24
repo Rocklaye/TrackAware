@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+  <meta charset="UTF-8">
+  <title>TrackAware – Graphiques</title>
+  <link rel="stylesheet" href="dashboard.css">
+</head>
+
+<body>
+
+  <header class="header">
+    <h1>Visualisations TrackAware</h1>
+    <p class="subtitle">Analyse graphique de vos données collectées</p>
+  </header>
+
+  <div class="view-switch">
+    <button class="filter-btn" id="btnBack">← Retour aux logs</button>
+  </div>
+
+  <div class="chart-selector">
+    <select id="chartSelector">
+      <option value="categories">Histogramme par catégorie</option>
+      <option value="timeline">Évolution des logs</option>
+      <option value="domains">Temps passé par domaine</option>
+      <option value="pie">Répartition des domaines</option>
+      <option value="heatmap">Heatmap d’activité</option>
+    </select>
+  </div>
+
+  <section id="chartsContainer" class="charts-container"></section>
+
+  <!-- Chart.js local -->
+  <script src="libs/chart.js"></script>
+
+  <!-- Module de visualisation -->
+  <script src="charts.js"></script>
+
+  <!-- Script de la page -->
+  <script src="dashboard_charts.js"></script>
+
+</body>
+</html>

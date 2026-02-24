@@ -1,29 +1,26 @@
-console.log("background.js chargé");
+// src/background.js
+console.log("background.js chargé !");
 
-import { Tracker } from "./tracker.js";
+import { Tracker, safeSendMessage } from "./tracker.js";
 
-/* ---------------------------------------------------------
-   Device info
---------------------------------------------------------- */
+/* Utilitaires device info */
 function getDeviceInfo() {
   return {
     user_agent: navigator.userAgent,
-    browser: "Chrome"
+    browser: "Chrome",
+    platform: navigator.platform,
+    language: navigator.language
   };
 }
 
-/* ---------------------------------------------------------
-   1) Ouvrir consent.html uniquement à l'installation
---------------------------------------------------------- */
+/* 1) Ouvrir consent.html uniquement à l'installation */
 chrome.runtime.onInstalled.addListener((details) => {
   if (details.reason === "install") {
     chrome.tabs.create({ url: "src/consent/consent.html" });
   }
 });
 
-/* ---------------------------------------------------------
-   2) Initialisation du tracker à CHAQUE réveil du SW
---------------------------------------------------------- */
+/* 2) Initialisation du tracker à chaque réveil du service worker */
 function initializeTracker() {
   chrome.storage.local.get(["consent", "preferences", "setup"], (res) => {
     console.log("INIT CHECK:", res);
@@ -40,37 +37,32 @@ function initializeTracker() {
     if (res.consent === "accepted") {
       Tracker.init(res.consent, res.preferences || {});
       initActivityModule();
+    } else {
+      Tracker.updateConsent(res.consent || "refused", res.preferences || {});
     }
   });
 }
-
 initializeTracker();
 
-/* ---------------------------------------------------------
-   3) Mise à jour du consentement / préférences
---------------------------------------------------------- */
-chrome.runtime.onMessage.addListener((msg) => {
+/* 3) Messages : consent / preferences / autres */
+chrome.runtime.onMessage.addListener((msg, sender, sendResponse) => {
   if (!msg?.type) return;
 
   if (msg.type === "CONSENT_UPDATE") {
     Tracker.updateConsent(msg.value, msg.preferences);
-
     chrome.tabs.query({ url: chrome.runtime.getURL("src/consent/consent.html") }, (tabs) => {
       tabs.forEach(t => chrome.tabs.remove(t.id));
     });
-
     initializeTracker();
   }
 
   if (msg.type === "PREFERENCES_UPDATE") {
-    Tracker.updatePreferences(msg.preferences);
-    initActivityModule();
+    Tracker.updatePreferences(msg.preferences || {});
+    initializeTracker();
   }
 });
 
-/* ---------------------------------------------------------
-   4) Module : ajout_supp (notes)
---------------------------------------------------------- */
+/* 4) Module ajout_supp notes */
 chrome.runtime.onMessage.addListener((msg) => {
   if (msg.type === "NOTE_ADD") {
     Tracker.track("ajout_supp", "NOTE_ADD", {
@@ -92,9 +84,7 @@ chrome.runtime.onMessage.addListener((msg) => {
   }
 });
 
-/* ---------------------------------------------------------
-   5) Module : periode (ouverture/fermeture extension)
---------------------------------------------------------- */
+/* 5) Module periode ouverture/fermeture extension */
 chrome.runtime.onMessage.addListener((msg) => {
   if (msg.type === "EXTENSION_OPEN") {
     chrome.storage.local.set({ extension_open_at: Date.now() });
@@ -115,7 +105,7 @@ chrome.runtime.onMessage.addListener((msg) => {
         duration_ms: duration,
         duration_s: duration ? Math.round(duration / 1000) : null,
         from: msg.from || "unknown",
-        human_readable: `Fermeture de l’extension après ${Math.round(duration / 1000)} secondes.`,
+        human_readable: `Fermeture de l’extension après ${Math.round((duration || 0) / 1000)} secondes.`,
         device_info: getDeviceInfo()
       });
 
@@ -124,9 +114,7 @@ chrome.runtime.onMessage.addListener((msg) => {
   }
 });
 
-/* ---------------------------------------------------------
-   6) Module : url (domaine visité)
---------------------------------------------------------- */
+/* 6) Module url domaine visité */
 chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
   if (changeInfo.status !== "complete") return;
 
@@ -158,9 +146,7 @@ chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
   });
 });
 
-/* ---------------------------------------------------------
-   7) Module : temps + onglet
---------------------------------------------------------- */
+/* 7) Module temps + onglet (final) */
 let activeTimer = {
   tabId: null,
   windowId: null,
@@ -176,28 +162,6 @@ function getDomain(url) {
   } catch (_) {
     return null;
   }
-}
-
-function logTimeSpent(reason) {
-  chrome.storage.local.get(["preferences"], (res) => {
-    if (!res.preferences?.temps) return;
-
-    if (!activeTimer.startedAt || !activeTimer.domain) return;
-
-    const duration = Date.now() - activeTimer.startedAt;
-    if (duration < 800) return;
-
-    Tracker.track("temps", "TIME_SPENT", {
-      tab_id: activeTimer.tabId,
-      window_id: activeTimer.windowId,
-      domain: activeTimer.domain,
-      duration_ms: duration,
-      duration_s: Math.round(duration / 1000),
-      reason,
-      human_readable: `Temps passé sur ${activeTimer.domain} : ${Math.round(duration / 1000)} secondes.`,
-      device_info: getDeviceInfo()
-    });
-  });
 }
 
 function startTimer(tabId, windowId, url) {
@@ -216,6 +180,36 @@ function startTimer(tabId, windowId, url) {
   };
 }
 
+function logTimeSpent(reason) {
+  chrome.storage.local.get(["preferences"], (res) => {
+    if (!res.preferences?.temps) return;
+    if (!activeTimer.startedAt || !activeTimer.domain) return;
+
+    const durationMs = Date.now() - activeTimer.startedAt;
+    if (durationMs < 800) return;
+
+    Tracker.track("temps", "TIME_SPENT", {
+      tab_id: activeTimer.tabId,
+      window_id: activeTimer.windowId,
+      domain: activeTimer.domain,
+      duration_ms: durationMs,
+      duration_s: Math.round(durationMs / 1000),
+      reason,
+      human_readable: `Temps passé sur ${activeTimer.domain} : ${Math.round(durationMs / 1000)} secondes.`,
+      device_info: getDeviceInfo()
+    });
+
+    activeTimer.startedAt = null;
+  });
+}
+
+/* Démarrer le timer au réveil du SW sur l'onglet actif courant */
+chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
+  const tab = tabs?.[0];
+  if (tab?.url) startTimer(tab.id, tab.windowId, tab.url);
+});
+
+/* Listeners */
 chrome.tabs.onActivated.addListener((activeInfo) => {
   logTimeSpent("tab_switch");
 
@@ -255,16 +249,34 @@ chrome.windows.onFocusChanged.addListener((windowId) => {
   });
 });
 
-chrome.tabs.onRemoved.addListener((tabId) => {
+chrome.tabs.onRemoved.addListener((tabId, removeInfo) => {
   if (activeTimer.tabId === tabId) {
     logTimeSpent("tab_closed");
     activeTimer.startedAt = null;
   }
+  logTabCount("tab_removed");
 });
 
-/* ---------------------------------------------------------
-   8) Module : activite 
---------------------------------------------------------- */
+/* 8) Module nb_onglet */
+function logTabCount(reason) {
+  chrome.storage.local.get(["preferences"], (res) => {
+    if (!res.preferences?.nb_onglet) return;
+
+    chrome.tabs.query({}, (tabs) => {
+      Tracker.track("nb_onglet", "TAB_COUNT", {
+        count: tabs.length,
+        reason,
+        human_readable: `Nombre d’onglets ouverts : ${tabs.length}.`,
+        device_info: getDeviceInfo()
+      });
+    });
+  });
+}
+
+chrome.tabs.onCreated.addListener(() => logTabCount("tab_created"));
+chrome.tabs.onRemoved.addListener(() => logTabCount("tab_removed"));
+
+/* 9) Module activite */
 let activityAttached = false;
 let lastActivityState = "active";
 let lastActivityTimestamp = Date.now();

@@ -5,35 +5,100 @@ document.addEventListener("DOMContentLoaded", () => {
     const clearBtn = document.getElementById("clearBtn");
     const filterButtons = document.querySelectorAll(".filter-btn");
 
+    const timeFilter = document.getElementById("timeFilter");
+    const limitFilter = document.getElementById("limitFilter");
+
+    // Navigation
+    document.getElementById("btnCharts").addEventListener("click", () => {
+        window.location.href = "dashboard_charts.html";
+    });
+
+    document.getElementById("btnLogs").addEventListener("click", () => {
+        window.location.href = "dashboard.html";
+    });
+
     let allLogs = [];
     let currentFilter = "all";
     let currentSearch = "";
 
     /* ---------------------------------------------------------
-       1) Charger les logs depuis chrome.storage.local
+       Formatage lisible de l'horodatage
+    --------------------------------------------------------- */
+    function formatTimestamp(ts) {
+        const date = new Date(ts);
+        return date.toLocaleString("fr-FR", {
+            year: "numeric",
+            month: "long",
+            day: "2-digit",
+            hour: "2-digit",
+            minute: "2-digit",
+            second: "2-digit"
+        }).replace(",", " à");
+    }
+
+    /* ---------------------------------------------------------
+       Charger les logs
     --------------------------------------------------------- */
     function loadLogs() {
         chrome.storage.local.get(["logs"], (res) => {
             allLogs = res.logs || [];
+            updateStats();
             renderLogs();
         });
     }
 
     /* ---------------------------------------------------------
-       2) Appliquer filtre + recherche
+       Compteurs par catégorie
+    --------------------------------------------------------- */
+    function updateStats() {
+        const statsBar = document.getElementById("statsBar");
+        const counts = {};
+
+        allLogs.forEach(log => {
+            counts[log.category] = (counts[log.category] || 0) + 1;
+        });
+
+        statsBar.innerHTML = Object.entries(counts)
+            .map(([cat, count]) => `<div class="stats-item">${cat}: ${count}</div>`)
+            .join("");
+    }
+
+    /* ---------------------------------------------------------
+       Filtrage
     --------------------------------------------------------- */
     function getFilteredLogs() {
         return allLogs.filter((log) => {
-            // Filtre par catégorie
-            if (currentFilter !== "all" && log.category !== currentFilter) {
-                return false;
-            }
 
-            // Recherche texte
+            if (currentFilter !== "all" && log.category !== currentFilter) return false;
+
             if (currentSearch.trim() !== "") {
                 const q = currentSearch.toLowerCase();
                 const haystack = JSON.stringify(log).toLowerCase();
                 if (!haystack.includes(q)) return false;
+            }
+
+            if (timeFilter.value !== "all") {
+                const now = Date.now();
+                const ts = new Date(log.timestamp).getTime();
+
+                if (timeFilter.value === "1h" && now - ts > 3600000) return false;
+                if (timeFilter.value === "24h" && now - ts > 86400000) return false;
+
+                if (timeFilter.value === "today") {
+                    const today = new Date();
+                    today.setHours(0, 0, 0, 0);
+                    if (ts < today.getTime()) return false;
+                }
+
+                if (timeFilter.value === "week") {
+                    const weekAgo = now - 7 * 86400000;
+                    if (ts < weekAgo) return false;
+                }
+
+                if (timeFilter.value === "month") {
+                    const monthAgo = now - 30 * 86400000;
+                    if (ts < monthAgo) return false;
+                }
             }
 
             return true;
@@ -41,12 +106,17 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     /* ---------------------------------------------------------
-       3) Affichage des logs
+       Affichage des logs
     --------------------------------------------------------- */
     function renderLogs() {
         logsContainer.innerHTML = "";
 
-        const logsToShow = getFilteredLogs();
+        let logsToShow = getFilteredLogs();
+
+        if (limitFilter.value !== "all") {
+            const limit = parseInt(limitFilter.value);
+            logsToShow = logsToShow.slice(-limit);
+        }
 
         if (logsToShow.length === 0) {
             const empty = document.createElement("div");
@@ -60,18 +130,15 @@ document.addEventListener("DOMContentLoaded", () => {
             const entry = document.createElement("div");
             entry.className = "log-entry";
 
-            /* ---------- HEADER ---------- */
             const header = document.createElement("div");
             header.className = "log-header";
 
             const left = document.createElement("div");
 
-            // Catégorie (bleu)
             const catSpan = document.createElement("span");
             catSpan.className = "log-category";
             catSpan.textContent = (log.category || "").toUpperCase();
 
-            // Event (gris clair)
             const eventSpan = document.createElement("span");
             eventSpan.className = "log-event";
             eventSpan.textContent = " - " + (log.event || "").toUpperCase();
@@ -79,20 +146,16 @@ document.addEventListener("DOMContentLoaded", () => {
             left.appendChild(catSpan);
             left.appendChild(eventSpan);
 
-            // Timestamp
             const right = document.createElement("div");
             right.className = "log-timestamp";
-            right.textContent = log.timestamp || "";
+            right.textContent = formatTimestamp(log.timestamp);
 
             header.appendChild(left);
             header.appendChild(right);
 
-            /* ---------- DETAILS JSON ---------- */
             const details = document.createElement("div");
             details.className = "log-details";
-
-            const pretty = JSON.stringify(log, null, 2);
-            details.textContent = pretty;
+            details.textContent = JSON.stringify(log, null, 2);
 
             entry.appendChild(header);
             entry.appendChild(details);
@@ -106,7 +169,7 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     /* ---------------------------------------------------------
-       4) Gestion des filtres
+       Filtres
     --------------------------------------------------------- */
     filterButtons.forEach((btn) => {
         btn.addEventListener("click", () => {
@@ -118,16 +181,16 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     });
 
-    /* ---------------------------------------------------------
-       5) Recherche
-    --------------------------------------------------------- */
     searchInput.addEventListener("input", () => {
         currentSearch = searchInput.value;
         renderLogs();
     });
 
+    timeFilter.addEventListener("change", renderLogs);
+    limitFilter.addEventListener("change", renderLogs);
+
     /* ---------------------------------------------------------
-       6) Export JSON
+       Export JSON
     --------------------------------------------------------- */
     exportBtn.addEventListener("click", () => {
         const logsToExport = getFilteredLogs();
@@ -144,19 +207,20 @@ document.addEventListener("DOMContentLoaded", () => {
     });
 
     /* ---------------------------------------------------------
-       7) Effacer les logs
+       Effacer les logs
     --------------------------------------------------------- */
     clearBtn.addEventListener("click", () => {
         if (!confirm("Voulez-vous vraiment effacer tous les logs ?")) return;
 
         chrome.storage.local.set({ logs: [] }, () => {
             allLogs = [];
+            updateStats();
             renderLogs();
         });
     });
 
     /* ---------------------------------------------------------
-       8) Init
+       Init
     --------------------------------------------------------- */
     loadLogs();
 });

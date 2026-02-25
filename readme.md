@@ -5,7 +5,7 @@
 TrackAware est une extension Chrome de prise de notes, conçue pour révéler les mécanismes invisibles de collecte de données utilisés dans de nombreux sites web et applications.
 
 Elle fonctionne en apparence comme une simple extension de prise de notes.  
-Cependant, en arrière-plan, elle simule le comportement d’un système de tracking similaire à ceux utilisés dans :
+Cependant, en arrière-plan, TrackAware simule le comportement d’un système de tracking similaire à ceux utilisés dans :
 
 - les bannières de cookies,
 - les outils analytiques,
@@ -19,7 +19,7 @@ Elle offre :
 - un dashboard complet pour visualiser les événements enregistrés, les filtrer, les exporter et les analyser.
 
 🎯 Objectif pédagogique :  
-Montrer concrètement ce qui se passe lorsqu’un utilisateur interagit avec une interface numérique, et comment des données apparemment anodines peuvent être collectées, corrélées et persistées.
+Comprendre concrètement ce qui se passe lorsqu’un utilisateur interagit avec une interface numérique, et comment des données apparemment anodines peuvent être corrélées pour profiler un comportement.
 
 L’objectif n’est pas de surveiller l’utilisateur, mais de démontrer concrètement :
 
@@ -65,15 +65,15 @@ Le projet répond aux exigences suivantes :
 ### 3.1. Prérequis
 
 Un navigateur basé sur Chromium :
-✔ Chrome
-✔ Edge
-✔ Brave
-✔ Opera
-✔ Vivaldi
+- ✔ Chrome
+- ✔ Edge
+- ✔ Brave
+- ✔ Opera
+- ✔ Vivaldi
 
 Firefox et Safari ne sont pas compatibles (Manifest V3 non supporté).
 
-### 3.2. Installation en mode développeur
+### 3.2. Installation de TrackAware en mode développeur
 Télécharger ou cloner le dépôt GitHub :
 
 `git clone https://github.com/Rocklaye/TrackAware.git`
@@ -88,6 +88,9 @@ TrackAware demarre et apparaît dans la barre d’extension
 
 
 ## 4. Structure de l’extension
+
+Voici un aperçu de l’interface TrackAware :
+
 ![Images](https://raw.githubusercontent.com/Rocklaye/TrackAware/main/images/TrackAware.png)
 TrackAware est composée de trois vues principales :
 
@@ -100,7 +103,7 @@ Fonctionnalités :
 - Supprimer une note
 - Stockage local automatique
 
-Cette vue simule une application “normale” que l’utilisateur pourrait utiliser au quotidien.
+Cette vue simule une application `normale` que l’utilisateur pourrait utiliser au quotidien.
 
 ### 4.2. Vue Consentement — Préférences de confidentialité
 Lors de la première installation, l’utilisateur doit choisir :
@@ -109,7 +112,7 @@ Lors de la première installation, l’utilisateur doit choisir :
 - Refuser
 - Personnaliser les préférences
 
-Par défaut : Refusé
+Par défaut : `Refusé`
 L’extension ne collecte que le strict minimum pour fonctionner :
  
  | Donnée	     |    Description                        |
@@ -119,6 +122,7 @@ L’extension ne collecte que le strict minimum pour fonctionner :
  |` timestamp  ` |	Horodatage des événements            | 
 
 Aucun tracking n’est actif tant que l’utilisateur n’a pas donné son consentement.
+L'utilisateur peut modifier ces préférences en cliquant sur le bouton `Confidentialité` dans le popup de l'extension.
 
 ### 🔸Préférences de confidentialité
 
@@ -155,6 +159,34 @@ Visualisations générées avec Chart.js :
 - Répartition des événements
 
 Les graphiques s’adaptent aux préférences activées.
+##### 🔹Types de diagrammes disponibles
+
+Le dashboard propose quatre visualisations principales, générées avec Chart.js.  
+Elles permettent d’analyser les logs sous différents angles et de comprendre comment les actions de l’utilisateur influencent la collecte locale.
+
+###### 📊 1. Histogramme - Répartition des événements
+Affiche le **nombre d’événements par catégorie** (`DOMAIN_VISIT`, `TAB_SWITCH`, `NOTE_ADD`, etc.).  
+Permet d’identifier quels modules génèrent le plus de logs et d’observer l’impact des préférences de confidentialité.
+
+###### 🥧 2. Diagramme circulaire - Proportions des événements
+Montre la **proportion de chaque type d’événement** dans l’ensemble des logs.  
+Idéal pour visualiser la distribution globale et repérer les catégories dominantes.
+
+###### 📈 3. Courbe temporelle - Évolution dans le temps
+Affiche les événements dans l’ordre chronologique.  
+Permet d’observer les périodes d’activité, les séquences d’actions et les comportements dans le temps.
+
+###### 🗂️ 4. Diagramme par domaine - Regroupement par site
+Regroupe les événements par **domaine** (ex : youtube.com, wikipedia.org).  
+Utile pour analyser les sites les plus visités ou les plus actifs.
+
+###### 🌡️ 5. Heatmap - Intensité d’activité dans le temps 
+Affiche une **carte de chaleur** représentant l’intensité des événements en fonction du temps (par exemple par heure et par jour). Permet de visualiser rapidement les périodes les plus actives et de repérer des patterns d’usage (heures de pointe, moments d’inactivité, etc.).
+
+
+### 🔄 Rafraîchissement du Dashboard
+Le dashboard se met automatiquement à jour toutes les **10 secondes**.  
+Pour forcer une actualisation immédiate (par exemple après avoir modifié les préférences), il suffit de **rafraîchir la page du dashboard**.
 
 ## 5. Données collectées
 
@@ -194,7 +226,7 @@ TrackAware montre comment :
 peuvent suffire à déduire des comportements réels.
 
 ## 7. Limites de la démonstration
-- Limite au navigateur de type chromium
+- Limite aux navigateurs de type chromium
 - Pas de serveur distant
 - Pas de cookies tiers
 - Pas de fingerprinting
@@ -203,7 +235,7 @@ peuvent suffire à déduire des comportements réels.
 
 L’objectif reste pédagogique, 
 
-## Données non collectées
+### 🔸Données non collectées
 
 - Aucun mot de passe
 - Aucune donnée personnelle
@@ -218,26 +250,24 @@ L’objectif reste pédagogique,
 ## 🔸 Scénario 1 - Consentement
 
 1. Installer l’extension  
-2. Cliquer sur « Refuser »  
+2. Cliquer sur  `Refuser` 
 3. Observer les logs  
-4. Cliquer sur « Accepter »  
-5. Comparer les événements générés  
-
-Résultat : différence claire et observable.
+4. Activer une ou plusieurs préférences cliquer sur  `Accepter` 
+5. Comparer les événements
 
 ---
 
 ## 🔸 Scénario 2 - Navigation
 
-1. Cocher `Domaines visités` dans les preferences de confidentialite
+1. Activer `Domaines visités` dans le menu de Confidentialité
 2. Ouvrir plusieurs sites  
 3. Changer d’onglets  
 4. Ouvrir le dashboard  
-5. Observer les logs `DOMAIN_VISIT` , `TAB_SWITCH` , `TAB_COUNT`  dans le dashboard
+5. Observer les logs `DOMAIN_VISIT` , `TAB_SWITCH` , `TAB_COUNT`
 
-## 🔸 Scénario 3 - Extension
+## 🔸 Scénario 3 - Notes
 
-1. Cocher `Ouverture / fermeture de l’extension` et `Ajout / suppression de notes` dans les preferences de confidentialite
+1. Cocher `Ouverture / fermeture de l’extension` et `Ajout / suppression de notes` dans les preferences de Confidentialité
 2. Ouvrir l’extension  
 3. Ajouter une note  
 3. Supprimer une note  
@@ -245,13 +275,23 @@ Résultat : différence claire et observable.
 5. Observer les logs dans le dashboard  `PERIODE - EXTENSION_OPEN` , `AJOUT_SUPP - NOTE_ADD` , `AJOUT_SUPP - NOTE_DELETE`
 
 ---
+## 🔸 Scénario 4 - Tout accepter
 
-## 🔸 Scénario 4 - Activité
+1. Cocher toutes les case dans la page de preferences de Confidentialité
+2. Ouvrir l’extension  
+3. Naviguer sur internet (ouvrez plusieurs pages web)
+4. Ajouter / Supprimer une note
+6. Generer un maximum de logs
+7. Observer l'ensemble des événements
+8. Utiliser les filtres et diagrammes du dashboard
 
-1. Cocher `Activité / inactivité utilisateur` et `Domaines visités` dans les preferences de confidentialite
+
+## 🔸 Scénario 5 - Activité
+
+1. Cocher `Activité / inactivité utilisateur` et `Domaines visités` dans les preferences de Confidentialité
 2. Ouvrir l’extension  
 3. Ouvrir un site  
-4. Rester inactif 1 minute dans le meme site 
+4. Rester inactif 1 minute dans le même site 
 5. Revenir  
 6. Observer les événements  
 

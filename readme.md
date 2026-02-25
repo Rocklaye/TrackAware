@@ -1,5 +1,5 @@
 #  TrackAware 
-##### Extension Chrome de transparence et de suivi local - Soyez conscient du tracking de vos données
+###### Extension Chrome de transparence et de suivi local - Soyez conscient du tracking de vos données
 
 ## 1. Présentation générale
 
@@ -325,3 +325,5 @@ TrackAware démontre que :
 - le stockage local peut devenir un mécanisme persistant,
 - le consentement modifie la logique de collecte.
 Comprendre ces mécanismes est essentiel pour mieux protéger la vie privée.
+
+###### Soyez conscient du tracking de vos données

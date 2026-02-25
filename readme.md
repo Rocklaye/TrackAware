@@ -1,5 +1,5 @@
 #  TrackAware 
-###### **Extension Chrome de transparence et de suivi local - Soyez conscient du tracking de vos données**
+###### Extension Chrome de transparence et de suivi local - Soyez conscient du tracking de vos données
 
 ## 1. Présentation générale
 

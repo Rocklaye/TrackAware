@@ -161,34 +161,37 @@ Visualisations générées avec Chart.js :
 - Répartition des événements
 
 Les graphiques s’adaptent aux préférences activées.
+
+---
 #### 🔹Types de diagrammes disponibles
 
 Le dashboard propose quatre visualisations principales, générées avec Chart.js.  
 Elles permettent d’analyser les logs sous différents angles et de comprendre comment les actions de l’utilisateur influencent la collecte locale.
 
 ##### 📊 Histogramme - Répartition des événements
-Affiche le **nombre d’événements par catégorie** (`DOMAIN_VISIT`, `TAB_SWITCH`, `NOTE_ADD`, etc.).  
+Affiche le `nombre d’événements par catégorie` (`DOMAIN_VISIT`, `TAB_SWITCH`, `NOTE_ADD`, etc.).  
 Permet d’identifier quels modules génèrent le plus de logs et d’observer l’impact des préférences de confidentialité.
 
 ##### 🥧 Diagramme circulaire - Proportions des événements
-Montre la **proportion de chaque type d’événement** dans l’ensemble des logs.  
+Montre la `proportion de chaque type d’événement` dans l’ensemble des logs.  
 Idéal pour visualiser la distribution globale et repérer les catégories dominantes.
 
 ##### 📈 Courbe temporelle - Évolution dans le temps
-Affiche les événements dans l’ordre chronologique.  
+Affiche les événements dans `l’ordre chronologique`.  
 Permet d’observer les périodes d’activité, les séquences d’actions et les comportements dans le temps.
 
 ##### 🗂️ Diagramme par domaine - Regroupement par site
-Regroupe les événements par **domaine** (ex : youtube.com, wikipedia.org).  
+Regroupe les événements par `domaine` (ex : youtube.com, wikipedia.org).  
 Utile pour analyser les sites les plus visités ou les plus actifs.
 
 ##### 🌡️ Heatmap - Intensité d’activité dans le temps 
-Affiche une **carte de chaleur** représentant l’intensité des événements en fonction du temps (par exemple par heure et par jour). Permet de visualiser rapidement les périodes les plus actives et de repérer des patterns d’usage (heures de pointe, moments d’inactivité, etc.).
-
+Affiche une `carte de chaleur` représentant l’intensité des événements en fonction du temps (par exemple par heure et par jour). Permet de visualiser rapidement les périodes les plus actives et de repérer des patterns d’usage (heures de pointe, moments d’inactivité, etc.).
 
 #### 🔄 Rafraîchissement du Dashboard
 Le dashboard se met automatiquement à jour toutes les **10 secondes**.  
 Pour forcer une actualisation immédiate (par exemple après avoir modifié les préférences), il suffit de **rafraîchir la page du dashboard**.
+
+---
 
 ## 5. Données collectées
 

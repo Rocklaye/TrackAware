@@ -87,6 +87,7 @@ Télécharger ou cloner le dépôt GitHub :
 
 TrackAware demarre et apparaît dans la barre d’extension 
 
+---
 
 ## 4. Structure de l’extension
 
@@ -163,28 +164,28 @@ Visualisations générées avec Chart.js :
 Les graphiques s’adaptent aux préférences activées.
 
 ---
-#### 🔹Types de diagrammes disponibles
+## 5. Types de diagrammes disponibles
 
 Le dashboard propose quatre visualisations principales, générées avec Chart.js.  
 Elles permettent d’analyser les logs sous différents angles et de comprendre comment les actions de l’utilisateur influencent la collecte locale.
 
-##### 📊 Histogramme - Répartition des événements
+### 📊 1. Histogramme - Répartition des événements
 Affiche le `nombre d’événements par catégorie` (`DOMAIN_VISIT`, `TAB_SWITCH`, `NOTE_ADD`, etc.).  
 Permet d’identifier quels modules génèrent le plus de logs et d’observer l’impact des préférences de confidentialité.
 
-##### 🥧 Diagramme circulaire - Proportions des événements
+### 🥧 2. Diagramme circulaire - Proportions des événements
 Montre la `proportion de chaque type d’événement` dans l’ensemble des logs.  
 Idéal pour visualiser la distribution globale et repérer les catégories dominantes.
 
-##### 📈 Courbe temporelle - Évolution dans le temps
+### 📈 3. Courbe temporelle - Évolution dans le temps
 Affiche les événements dans `l’ordre chronologique`.  
 Permet d’observer les périodes d’activité, les séquences d’actions et les comportements dans le temps.
 
-##### 🗂️ Diagramme par domaine - Regroupement par site
+### 🗂️ 4. Diagramme par domaine - Regroupement par site
 Regroupe les événements par `domaine` (ex : youtube.com, wikipedia.org).  
 Utile pour analyser les sites les plus visités ou les plus actifs.
 
-##### 🌡️ Heatmap - Intensité d’activité dans le temps 
+### 🌡️ 5. Heatmap - Intensité d’activité dans le temps 
 Affiche une `carte de chaleur` représentant l’intensité des événements en fonction du temps (par exemple par heure et par jour). Permet de visualiser rapidement les périodes les plus actives et de repérer des patterns d’usage (heures de pointe, moments d’inactivité, etc.).
 
 #### 🔄 Rafraîchissement du Dashboard
@@ -193,7 +194,7 @@ Pour forcer une actualisation immédiate (par exemple après avoir modifié les 
 
 ---
 
-## 5. Données collectées
+## 6. Données collectées
 
 
 | Catégorie      | Exemple                           | Description                                      |
@@ -211,7 +212,9 @@ Toutes les données sont :
 - locales,
 - consultables via le dashboard.
 
-## 6. Implications et risques
+---
+
+## 7. Implications et risques
 Même sans données sensibles, il est possible de :
 
 - Reconstituer des habitudes horaires
@@ -230,7 +233,9 @@ TrackAware montre comment :
 
 peuvent suffire à déduire des comportements réels.
 
-## 7. Limites de la démonstration
+---
+
+## 8. Limites de la démonstration
 - Limite aux navigateurs de type chromium
 - Pas de serveur distant
 - Pas de cookies tiers
@@ -250,7 +255,7 @@ L’objectif reste pédagogique,
 
 ---
 
-##  8. Scénarios reproductibles
+##  9. Scénarios reproductibles
 
 ### 🔸 Scénario 1 - Consentement
 
@@ -269,6 +274,8 @@ L’objectif reste pédagogique,
 3. Changer d’onglets  
 4. Ouvrir le dashboard  
 5. Observer les logs `DOMAIN_VISIT` , `TAB_SWITCH` , `TAB_COUNT`
+
+--- 
 
 ### 🔸 Scénario 3 - Notes
 
@@ -290,6 +297,7 @@ L’objectif reste pédagogique,
 7. Observer l'ensemble des événements
 8. Utiliser les filtres et diagrammes du dashboard
 
+---
 
 ### 🔸 Scénario 5 - Activité
 
@@ -306,7 +314,7 @@ Résultat :
 - `USER_RETURNED_ACTIVE`
 
 ---
-# 11. Conclusion
+##   Conclusion
 
 TrackAware démontre que :
 

@@ -326,4 +326,4 @@ TrackAware démontre que :
 - le consentement modifie la logique de collecte.
 Comprendre ces mécanismes est essentiel pour mieux protéger la vie privée.
 
-###### Soyez conscient du tracking de vos données
+###### TrackAware - Soyez conscient du tracking de vos données

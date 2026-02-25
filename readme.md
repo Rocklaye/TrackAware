@@ -1,4 +1,4 @@
-#  TrackAware - Extension Chrome de transparence et de suivi local
+#  TrackAware
 
 ## 1. Présentation générale
 
@@ -53,6 +53,8 @@ TrackAware expose ces événements en les rendant :
 L’extension permet de répondre à la question centrale du projet :
  `« Qu’est‑ce qui se passe exactement quand une action a lieu ? »`
 
+Le but TrackAware est de `rendre visibles et compréhensibles des mécanismes de collecte ou d’exploitation de données qui sont habituellement invisibles pour l’utilisateur`.
+
 Le projet répond aux exigences suivantes :
 
  ✔ Interface fonctionnelle  
@@ -106,7 +108,6 @@ Fonctionnalités :
 
 Cette vue simule une application `normale` que l’utilisateur pourrait utiliser au quotidien.
 
---
 
 ### 4.2. Vue Consentement - Préférences de confidentialité
 Lors de la première installation, l’utilisateur doit choisir :

@@ -111,14 +111,16 @@ Lors de la première installation, l’utilisateur doit choisir :
 
 Par défaut : Refusé
 L’extension ne collecte que le strict minimum pour fonctionner :
-Donnée	Description
-visitor_id	Identifiant unique généré une fois
-session_id	Identifiant de session
-timestamp	Horodatage des événements
+ 
+ | Donnée	     |    Description                        |
+ |---------------|---------------------------------------|
+ |` visitor_id ` |	Identifiant unique généré une fois   |
+ |` session_id`  |	Identifiant de session               |
+ |` timestamp  ` |	Horodatage des événements            | 
 
 Aucun tracking n’est actif tant que l’utilisateur n’a pas donné son consentement.
 
-### Préférences de confidentialité
+### 🔸Préférences de confidentialité
 
 | Préférence     | Ce qui est collecté                      | Exemple d’événement     |
 |----------------|------------------------------------------|-------------------------|
@@ -128,7 +130,7 @@ Aucun tracking n’est actif tant que l’utilisateur n’a pas donné son conse
 | Activité       | Idle / Active / Locked                   | `USER_BECAME_IDLE`      |
 | Période        | Ouverture / fermeture extension          | `EXTENSION_OPEN`        |
 | Notes          | Ajout / suppression de note              | `NOTE_ADD`              |
-| Temps (off)    | Durée passée par domaine                 | `TIME_SPENT` (désactivé)|
+| Temps          | Durée passée par domaine                 | `TIME_SPENT`            |
 
 
 Chaque case cochée active un module dans le service worker.
@@ -160,12 +162,12 @@ Les graphiques s’adaptent aux préférences activées.
 | Catégorie      | Exemple                           | Description                                      |
 |----------------|-----------------------------------|--------------------------------------------------|
 | Identifiants   | `visitor_id`, `session_id`        | Identifiants persistants générés localement      |
-| Navigation     | `domaine`, `protocole`, `chemin`  | Détection des pages visitées                     |
+| Navigation     | `domaine`, `url` , `protocole`,   | Détection des pages visitées                     |
 | Onglets        | `tab_id`, `window_id`, `nombre`   | Suivi des changements d’onglets                  |
 | Activité       | `active` / `idle` / `locked`      | Détection de l’inactivité                        |
 | Période        | `ouverture`, `fermeture extension`| Usage de l’extension                             |
 | Notes          | `ajout`, `suppression`            | Actions dans la popup                            |
-| Temps (off)    | `durée par domaine `              | Module désactivé dans cette version              |
+| Temps          | `durée par domaine `              | Temps effectue dans une pages                    |
 
 Toutes les données sont :
 
@@ -199,7 +201,7 @@ peuvent suffire à déduire des comportements réels.
 - Pas de corrélation multi‑appareils
 - Pas d’analyse statistique avancée
 
-L’objectif est pédagogique, pas industriel.
+L’objectif reste pédagogique, 
 
 ## Données non collectées
 

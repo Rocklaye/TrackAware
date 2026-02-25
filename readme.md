@@ -75,9 +75,7 @@ Un navigateur basé sur Chromium :
 Firefox et Safari ne sont pas compatibles (Manifest V3 non supporté).
 
 ### 3.2. Installation de TrackAware en mode développeur
-Télécharger ou cloner le dépôt GitHub :
-
-`git clone https://github.com/Rocklaye/TrackAware.git`
+Télécharger ou cloner le dépôt GitHub : `git clone https://github.com/Rocklaye/TrackAware.git`
 
 - Ouvrir Chrome
 - Aller à : chrome://extensions
@@ -107,6 +105,8 @@ Fonctionnalités :
 - Stockage local automatique
 
 Cette vue simule une application `normale` que l’utilisateur pourrait utiliser au quotidien.
+
+--
 
 ### 4.2. Vue Consentement - Préférences de confidentialité
 Lors de la première installation, l’utilisateur doit choisir :

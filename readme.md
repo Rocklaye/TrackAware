@@ -1,4 +1,6 @@
-#  TrackAware
+#  TrackAware 
+
+###### Extension Chrome de transparence et de suivi local
 
 ## 1. Présentation générale
 

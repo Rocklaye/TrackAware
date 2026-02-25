@@ -30,6 +30,7 @@ L’objectif n’est pas de surveiller l’utilisateur, mais de démontrer concr
 
 🔒 Aucune donnée n’est envoyée vers un serveur externe.  
 Tout est stocké localement dans votre navigateur.
+
 ---
 
 ## 2. Objectif du projet
@@ -54,22 +55,22 @@ L’extension permet de répondre à la question centrale du projet :
 
 Le projet répond aux exigences suivantes :
 
-✔ Interface fonctionnelle  
-✔ Journalisation claire des événements  
-✔ Preuves visibles de collecte  
-✔ Données locales uniquement  
+ ✔ Interface fonctionnelle  
+ ✔ Journalisation claire des événements  
+ ✔ Preuves visibles de collecte  
+ ✔ Données locales uniquement  
 
 ---
 
-## 3. Installation (détaillée)
+## 3. Installation 
 ### 3.1. Prérequis
 
 Un navigateur basé sur Chromium :
-- ✔ Chrome
-- ✔ Edge
-- ✔ Brave
-- ✔ Opera
-- ✔ Vivaldi
+  ✔ Chrome
+  ✔ Edge
+  ✔ Brave
+  ✔ Opera
+  ✔ Vivaldi
 
 Firefox et Safari ne sont pas compatibles (Manifest V3 non supporté).
 
@@ -92,6 +93,7 @@ TrackAware demarre et apparaît dans la barre d’extension
 Voici un aperçu de l’interface TrackAware :
 
 ![Images](https://raw.githubusercontent.com/Rocklaye/TrackAware/main/images/TrackAware.png)
+
 TrackAware est composée de trois vues principales :
 
 ### 4.1. Vue Popup - Prise de notes
@@ -105,7 +107,7 @@ Fonctionnalités :
 
 Cette vue simule une application `normale` que l’utilisateur pourrait utiliser au quotidien.
 
-### 4.2. Vue Consentement — Préférences de confidentialité
+### 4.2. Vue Consentement - Préférences de confidentialité
 Lors de la première installation, l’utilisateur doit choisir :
 
 - Accepter
@@ -139,10 +141,10 @@ L'utilisateur peut modifier ces préférences en cliquant sur le bouton `Confide
 
 Chaque case cochée active un module dans le service worker.
 
-### 4.3. Vue Dashboard — Visualisation des données
+### 4.3. Vue Dashboard - Visualisation des données
 Le dashboard contient deux onglets principaux :
 
-#### 🔹 1. Logs détaillés
+#### 1. Logs détaillés
 - Liste complète des événements
 - Filtrage par catégorie
 - Recherche
@@ -150,7 +152,7 @@ Le dashboard contient deux onglets principaux :
 - Effacement des logs
 - Exportation en JSON
 
-#### 🔹 2. Diagrammes
+#### 2. Diagrammes
 Visualisations générées avec Chart.js :
 
 - Histogrammes
@@ -159,32 +161,32 @@ Visualisations générées avec Chart.js :
 - Répartition des événements
 
 Les graphiques s’adaptent aux préférences activées.
-##### 🔹Types de diagrammes disponibles
+#### 🔹Types de diagrammes disponibles
 
 Le dashboard propose quatre visualisations principales, générées avec Chart.js.  
 Elles permettent d’analyser les logs sous différents angles et de comprendre comment les actions de l’utilisateur influencent la collecte locale.
 
-###### 📊 1. Histogramme - Répartition des événements
+##### 📊 Histogramme - Répartition des événements
 Affiche le **nombre d’événements par catégorie** (`DOMAIN_VISIT`, `TAB_SWITCH`, `NOTE_ADD`, etc.).  
 Permet d’identifier quels modules génèrent le plus de logs et d’observer l’impact des préférences de confidentialité.
 
-###### 🥧 2. Diagramme circulaire - Proportions des événements
+##### 🥧 Diagramme circulaire - Proportions des événements
 Montre la **proportion de chaque type d’événement** dans l’ensemble des logs.  
 Idéal pour visualiser la distribution globale et repérer les catégories dominantes.
 
-###### 📈 3. Courbe temporelle - Évolution dans le temps
+##### 📈 Courbe temporelle - Évolution dans le temps
 Affiche les événements dans l’ordre chronologique.  
 Permet d’observer les périodes d’activité, les séquences d’actions et les comportements dans le temps.
 
-###### 🗂️ 4. Diagramme par domaine - Regroupement par site
+##### 🗂️ Diagramme par domaine - Regroupement par site
 Regroupe les événements par **domaine** (ex : youtube.com, wikipedia.org).  
 Utile pour analyser les sites les plus visités ou les plus actifs.
 
-###### 🌡️ 5. Heatmap - Intensité d’activité dans le temps 
+##### 🌡️ Heatmap - Intensité d’activité dans le temps 
 Affiche une **carte de chaleur** représentant l’intensité des événements en fonction du temps (par exemple par heure et par jour). Permet de visualiser rapidement les périodes les plus actives et de repérer des patterns d’usage (heures de pointe, moments d’inactivité, etc.).
 
 
-### 🔄 Rafraîchissement du Dashboard
+#### 🔄 Rafraîchissement du Dashboard
 Le dashboard se met automatiquement à jour toutes les **10 secondes**.  
 Pour forcer une actualisation immédiate (par exemple après avoir modifié les préférences), il suffit de **rafraîchir la page du dashboard**.
 
@@ -245,9 +247,9 @@ L’objectif reste pédagogique,
 
 ---
 
-#  8. Scénarios reproductibles
+##  8. Scénarios reproductibles
 
-## 🔸 Scénario 1 - Consentement
+### 🔸 Scénario 1 - Consentement
 
 1. Installer l’extension  
 2. Cliquer sur  `Refuser` 
@@ -257,7 +259,7 @@ L’objectif reste pédagogique,
 
 ---
 
-## 🔸 Scénario 2 - Navigation
+### 🔸 Scénario 2 - Navigation
 
 1. Activer `Domaines visités` dans le menu de Confidentialité
 2. Ouvrir plusieurs sites  
@@ -265,7 +267,7 @@ L’objectif reste pédagogique,
 4. Ouvrir le dashboard  
 5. Observer les logs `DOMAIN_VISIT` , `TAB_SWITCH` , `TAB_COUNT`
 
-## 🔸 Scénario 3 - Notes
+### 🔸 Scénario 3 - Notes
 
 1. Cocher `Ouverture / fermeture de l’extension` et `Ajout / suppression de notes` dans les preferences de Confidentialité
 2. Ouvrir l’extension  
@@ -275,7 +277,7 @@ L’objectif reste pédagogique,
 5. Observer les logs dans le dashboard  `PERIODE - EXTENSION_OPEN` , `AJOUT_SUPP - NOTE_ADD` , `AJOUT_SUPP - NOTE_DELETE`
 
 ---
-## 🔸 Scénario 4 - Tout accepter
+### 🔸 Scénario 4 - Tout accepter
 
 1. Cocher toutes les case dans la page de preferences de Confidentialité
 2. Ouvrir l’extension  
@@ -286,7 +288,7 @@ L’objectif reste pédagogique,
 8. Utiliser les filtres et diagrammes du dashboard
 
 
-## 🔸 Scénario 5 - Activité
+### 🔸 Scénario 5 - Activité
 
 1. Cocher `Activité / inactivité utilisateur` et `Domaines visités` dans les preferences de Confidentialité
 2. Ouvrir l’extension  

@@ -1,7 +1,7 @@
 // src/background.js
 console.log("background.js chargé !");
 
-import { Tracker, safeSendMessage } from "./tracker.js";
+import { Tracker } from "./tracker.js";
 
 /* Utilitaires device info */
 function getDeviceInfo() {
@@ -37,12 +37,6 @@ function initializeTracker() {
     if (res.consent === "accepted") {
       Tracker.init(res.consent, res.preferences || {});
       initActivityModule();
-
-      // 🔥 Activation dynamique du module nb_onglet
-      if (res.preferences?.nb_onglet) {
-        initTabCountModule();
-      }
-
     } else {
       Tracker.updateConsent(res.consent || "refused", res.preferences || {});
     }
@@ -51,7 +45,7 @@ function initializeTracker() {
 initializeTracker();
 
 /* 3) Messages : consent / preferences / autres */
-chrome.runtime.onMessage.addListener((msg, sender, sendResponse) => {
+chrome.runtime.onMessage.addListener((msg) => {
   if (!msg?.type) return;
 
   if (msg.type === "CONSENT_UPDATE") {
@@ -224,17 +218,32 @@ chrome.tabs.onActivated.addListener((activeInfo) => {
     startTimer(activeInfo.tabId, activeInfo.windowId, tab?.url);
 
     chrome.storage.local.get(["preferences"], (res) => {
-      if (!res.preferences?.onglet) return;
+      const prefs = res.preferences || {};
 
-      const domain = getDomain(tab?.url);
+      /* Module onglet */
+      if (prefs.onglet) {
+        const domain = getDomain(tab?.url);
 
-      Tracker.track("onglet", "TAB_SWITCH", {
-        tab_id: activeInfo.tabId,
-        window_id: activeInfo.windowId,
-        domain,
-        human_readable: `Changement d’onglet vers ${domain || "un onglet interne"}.`,
-        device_info: getDeviceInfo()
-      });
+        Tracker.track("onglet", "TAB_SWITCH", {
+          tab_id: activeInfo.tabId,
+          window_id: activeInfo.windowId,
+          domain,
+          human_readable: `Changement d’onglet vers ${domain || "un onglet interne"}.`,
+          device_info: getDeviceInfo()
+        });
+      }
+
+      /* 🔥 Nouveau module nbOnglet basé sur TAB_SWITCH */
+      if (prefs.nbOnglet) {
+        chrome.tabs.query({}, (tabs) => {
+          Tracker.track("nb_onglet", "TAB_COUNT", {
+            count: tabs.length,
+            reason: "tab_switch",
+            human_readable: `Nombre d’onglets ouverts : ${tabs.length}.`,
+            device_info: getDeviceInfo()
+          });
+        });
+      }
     });
   });
 });
@@ -255,38 +264,12 @@ chrome.windows.onFocusChanged.addListener((windowId) => {
   });
 });
 
-chrome.tabs.onRemoved.addListener((tabId, removeInfo) => {
+chrome.tabs.onRemoved.addListener((tabId) => {
   if (activeTimer.tabId === tabId) {
     logTimeSpent("tab_closed");
     activeTimer.startedAt = null;
   }
 });
-
-/* 8) Module nb_onglet — corrigé */
-function initTabCountModule() {
-  if (initTabCountModule.attached) return;
-  initTabCountModule.attached = true;
-
-  chrome.tabs.onCreated.addListener(() => logTabCount("tab_created"));
-  chrome.tabs.onRemoved.addListener(() => logTabCount("tab_removed"));
-
-  logTabCount("initial_load");
-}
-
-function logTabCount(reason) {
-  chrome.storage.local.get(["preferences"], (res) => {
-    if (!res.preferences?.nb_onglet) return;
-
-    chrome.tabs.query({}, (tabs) => {
-      Tracker.track("nb_onglet", "TAB_COUNT", {
-        count: tabs.length,
-        reason,
-        human_readable: `Nombre d’onglets ouverts : ${tabs.length}.`,
-        device_info: getDeviceInfo()
-      });
-    });
-  });
-}
 
 /* 9) Module activite */
 let activityAttached = false;

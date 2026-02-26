@@ -209,7 +209,7 @@ chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
   if (tab?.url) startTimer(tab.id, tab.windowId, tab.url);
 });
 
-/* Listeners */
+/* 8) Listeners onglet + TAB_COUNT */
 chrome.tabs.onActivated.addListener((activeInfo) => {
   logTimeSpent("tab_switch");
 
@@ -233,7 +233,7 @@ chrome.tabs.onActivated.addListener((activeInfo) => {
         });
       }
 
-      /* 🔥 Nouveau module nbOnglet basé sur TAB_SWITCH */
+      /* 🔥 Module nbOnglet — version stable */
       if (prefs.nbOnglet) {
         chrome.tabs.query({}, (tabs) => {
           Tracker.track("nb_onglet", "TAB_COUNT", {
@@ -248,27 +248,20 @@ chrome.tabs.onActivated.addListener((activeInfo) => {
   });
 });
 
-chrome.windows.onFocusChanged.addListener((windowId) => {
-  if (windowId === chrome.windows.WINDOW_ID_NONE) {
-    logTimeSpent("window_blur");
-    activeTimer.startedAt = null;
-    return;
-  }
+/* 🔥 Compter aussi quand la fenêtre change */
+chrome.windows.onFocusChanged.addListener(() => {
+  chrome.storage.local.get(["preferences"], (res) => {
+    if (!res.preferences?.nbOnglet) return;
 
-  logTimeSpent("window_focus_change");
-
-  chrome.tabs.query({ active: true, windowId }, (tabs) => {
-    const tab = tabs?.[0];
-    if (!tab) return;
-    startTimer(tab.id, windowId, tab.url);
+    chrome.tabs.query({}, (tabs) => {
+      Tracker.track("nb_onglet", "TAB_COUNT", {
+        count: tabs.length,
+        reason: "window_focus_change",
+        human_readable: `Nombre d’onglets ouverts : ${tabs.length}.`,
+        device_info: getDeviceInfo()
+      });
+    });
   });
-});
-
-chrome.tabs.onRemoved.addListener((tabId) => {
-  if (activeTimer.tabId === tabId) {
-    logTimeSpent("tab_closed");
-    activeTimer.startedAt = null;
-  }
 });
 
 /* 9) Module activite */

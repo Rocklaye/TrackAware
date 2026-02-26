@@ -37,6 +37,12 @@ function initializeTracker() {
     if (res.consent === "accepted") {
       Tracker.init(res.consent, res.preferences || {});
       initActivityModule();
+
+      // 🔥 Activation dynamique du module nb_onglet
+      if (res.preferences?.nb_onglet) {
+        initTabCountModule();
+      }
+
     } else {
       Tracker.updateConsent(res.consent || "refused", res.preferences || {});
     }
@@ -254,10 +260,19 @@ chrome.tabs.onRemoved.addListener((tabId, removeInfo) => {
     logTimeSpent("tab_closed");
     activeTimer.startedAt = null;
   }
-  logTabCount("tab_removed");
 });
 
-/* 8) Module nb_onglet */
+/* 8) Module nb_onglet — corrigé */
+function initTabCountModule() {
+  if (initTabCountModule.attached) return;
+  initTabCountModule.attached = true;
+
+  chrome.tabs.onCreated.addListener(() => logTabCount("tab_created"));
+  chrome.tabs.onRemoved.addListener(() => logTabCount("tab_removed"));
+
+  logTabCount("initial_load");
+}
+
 function logTabCount(reason) {
   chrome.storage.local.get(["preferences"], (res) => {
     if (!res.preferences?.nb_onglet) return;
@@ -272,9 +287,6 @@ function logTabCount(reason) {
     });
   });
 }
-
-chrome.tabs.onCreated.addListener(() => logTabCount("tab_created"));
-chrome.tabs.onRemoved.addListener(() => logTabCount("tab_removed"));
 
 /* 9) Module activite */
 let activityAttached = false;
@@ -338,4 +350,3 @@ function initActivityModule() {
     });
   });
 }
-

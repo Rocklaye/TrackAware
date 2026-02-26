@@ -20,11 +20,9 @@ chrome.runtime.onInstalled.addListener((details) => {
   }
 });
 
-/* 2) Initialisation du tracker à chaque réveil du service worker */
+/* 2) Initialisation du tracker */
 function initializeTracker() {
   chrome.storage.local.get(["consent", "preferences", "setup"], (res) => {
-    console.log("INIT CHECK:", res);
-
     if (!res.setup) {
       const setup = {
         visitor_id: crypto.randomUUID(),
@@ -44,7 +42,7 @@ function initializeTracker() {
 }
 initializeTracker();
 
-/* 3) Messages : consent / preferences / autres */
+/* 3) Messages */
 chrome.runtime.onMessage.addListener((msg) => {
   if (!msg?.type) return;
 
@@ -84,7 +82,7 @@ chrome.runtime.onMessage.addListener((msg) => {
   }
 });
 
-/* 5) Module periode ouverture/fermeture extension */
+/* 5) Module période */
 chrome.runtime.onMessage.addListener((msg) => {
   if (msg.type === "EXTENSION_OPEN") {
     chrome.storage.local.set({ extension_open_at: Date.now() });
@@ -114,7 +112,7 @@ chrome.runtime.onMessage.addListener((msg) => {
   }
 });
 
-/* 6) Module url domaine visité */
+/* 6) Module URL */
 chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
   if (changeInfo.status !== "complete") return;
 
@@ -146,7 +144,7 @@ chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
   });
 });
 
-/* 7) Module temps + onglet (final) */
+/* 7) Module temps + onglet */
 let activeTimer = {
   tabId: null,
   windowId: null,
@@ -203,13 +201,13 @@ function logTimeSpent(reason) {
   });
 }
 
-/* Démarrer le timer au réveil du SW sur l'onglet actif courant */
+/* Timer au réveil */
 chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
   const tab = tabs?.[0];
   if (tab?.url) startTimer(tab.id, tab.windowId, tab.url);
 });
 
-/* 8) Listeners onglet + TAB_COUNT */
+/* 8) Onglet + TAB_COUNT */
 chrome.tabs.onActivated.addListener((activeInfo) => {
   logTimeSpent("tab_switch");
 
@@ -248,7 +246,7 @@ chrome.tabs.onActivated.addListener((activeInfo) => {
   });
 });
 
-/* 🔥 Compter aussi quand la fenêtre change */
+/* 🔥 TAB_COUNT aussi sur changement de fenêtre */
 chrome.windows.onFocusChanged.addListener(() => {
   chrome.storage.local.get(["preferences"], (res) => {
     if (!res.preferences?.nbOnglet) return;
@@ -264,7 +262,7 @@ chrome.windows.onFocusChanged.addListener(() => {
   });
 });
 
-/* 9) Module activite */
+/* 9) Module activité */
 let activityAttached = false;
 let lastActivityState = "active";
 let lastActivityTimestamp = Date.now();

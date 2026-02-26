@@ -68,6 +68,10 @@ export const Tracker = {
 
   track(type, event, details = {}) {
     if (this.consent !== "accepted") return;
+
+    // 🔥 Harmonisation automatique
+    if (type === "nb_onglet") type = "nbOnglet";
+
     if (!this.preferences[type]) return;
 
     this.log(type.toUpperCase(), event, details);

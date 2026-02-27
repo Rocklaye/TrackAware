@@ -261,7 +261,22 @@ Dans un environnement réel, ces informations ne sont pas visibles par l’utili
 
 ---
 
-##  9. Scénarios reproductibles
+## 9. Correction / Atténuation proposée contre le système de tracking
+TrackAware met en évidence la quantité d’informations comportementales qu’une extension navigateur peut collecter via ses API internes. Pour réduire les risques de profilage, de surveillance ou d’abus, plusieurs mesures techniques peuvent être envisagées au niveau du navigateur ou du système d’extensions.
+
+- Réduire la précision des données exposées : arrondir les timestamps, anonymiser les domaines, donner des plages d’onglets plutôt que des valeurs exactes.
+
+- Ajouter un mode “vie privée renforcée” : désactiver automatiquement les API sensibles (changement d’onglet, activité, URL, comptage des onglets).
+
+- Exiger un consentement explicite pour chaque API sensible : demander des permissions claires avant d’autoriser l’accès aux événements du navigateur.
+
+- Limiter la corrélation entre plusieurs sources de données : empêcher une extension de combiner URL + activité + temps + onglets pour reconstruire un profil complet.
+
+- Anonymiser automatiquement certaines données : hash des domaines, suppression des identifiants uniques, arrondi des durées.
+
+- Détecter les extensions “trop curieuses” : analyser leur comportement et avertir l’utilisateur si elles collectent trop d’événements sensibles.
+
+##  10. Scénarios reproductibles
 
 ### 🔸 Scénario 1 - Consentement
 

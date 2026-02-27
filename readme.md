@@ -55,6 +55,8 @@ L’extension permet de répondre à la question centrale du projet :
  `« Qu’est‑ce qui se passe exactement quand une action a lieu ? »`
 
 Le but TrackAware est de `rendre visibles et compréhensibles des mécanismes de collecte ou d’exploitation de données qui sont habituellement invisibles pour l’utilisateur`.
+Il repose sur un mécanisme central :
+`l’écoute d’événements du navigateur Chrome, via l’API chrome.`. Ces événements sont captés par le service worker (background.js), qui agit comme un “capteur central” toujours prêt à enregistrer une action utilisateur.
 
 Le projet répond aux exigences suivantes :
 

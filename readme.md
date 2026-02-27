@@ -96,7 +96,7 @@ TrackAware demarre et apparaît dans la barre d’extension
 
 Voici un aperçu de l’interface TrackAware :
    
-   ![Images](https://raw.githubusercontent.com/Rocklaye/TrackAware/main/images/TrackAware.png)
+   ![Images](https://github.com/Rocklaye/TrackAware/blob/main/images/TrackAware.png)
 
 TrackAware est composée de trois vues principales :
 

@@ -276,6 +276,8 @@ TrackAware met en évidence la quantité d’informations comportementales qu’
 
 - Détecter les extensions “trop curieuses” : analyser leur comportement et avertir l’utilisateur si elles collectent trop d’événements sensibles.
 
+---
+
 ##  10. Scénarios reproductibles
 
 ### 🔸 Scénario 1 - Consentement

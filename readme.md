@@ -246,8 +246,10 @@ peuvent suffire à déduire des comportements réels.
 - Pas de fingerprinting
 - Pas de corrélation multi‑appareils
 - Pas d’analyse statistique avancée
+- 
 
-L’objectif reste pédagogique, 
+L’objectif étant pédagogique, nous avons mis en évidence le menu Dashboard afin de faciliter la visualisation des logs et des données collectées.
+Dans un environnement réel, ces informations ne sont pas visibles par l’utilisateur.
 
 ### 🔸Données non collectées
 

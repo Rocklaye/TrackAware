@@ -224,13 +224,8 @@ document.addEventListener("DOMContentLoaded", () => {
     --------------------------------------------------------- */
     loadLogs();
 
-    document.addEventListener("DOMContentLoaded", () => {
-        loadLogs(); // Chargement initial
-
-        setInterval(() => {
-            loadLogs(); // Rafraîchissement toutes les 10 secondes
-            updateCharts();
-        }, 10000);
-    });
+    setInterval(() => {
+        loadLogs();
+    }, 10000);
 
 });
